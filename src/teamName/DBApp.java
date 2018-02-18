@@ -32,13 +32,13 @@ public class DBApp {
 		
 		Page table = new Page (strTableName, strClusteringKeyColumn, htblColNameType);
 		
-		if(!nameAllTables.contains("strTableName")) {
+		if(!nameAllTables.contains(strTableName)) {
 			
 			nameAllTables.put(strTableName, new ArrayList<Page>());
 			
 		}
 		
-		nameAllTables.get("StrTableName").add(table);
+		nameAllTables.get(strTableName).add(table);
 
 	
 	}
