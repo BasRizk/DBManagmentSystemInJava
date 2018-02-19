@@ -32,7 +32,7 @@ public class DBApp {
 		
 		if(!tableExists(strTableName)) {       //getNumOfPages(strTableName).size() != 0) {
 			
-			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType);
+			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , 200);
 			tables.add(table);
 			
 		} else {

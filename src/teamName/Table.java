@@ -25,14 +25,15 @@ public class Table implements Serializable{
 	private String primaryKey;
 	private Hashtable<String, String> ColName_Type;
 	private ArrayList<String> pagePathes;
-	private ArrayList<String> freePagesPathes;
+	private ArrayList<String> freePagesPathes; // contains free pages path does NOT contain lastPagePath
 	private String lastPagePath;
 	private int numOfRows;
 	private int numOfCol;
+	private int maxPageRowNumber; //the maximum number of rows in 1 page for now 200;
 	
 	
 	
-	public Table(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType) throws DBAppException {
+	public Table(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType , int maxPageRowNumber) throws DBAppException {
 		
 		this.tableName = strTableName;
 		this.primaryKey = strClusteringKeyColumn;
@@ -42,11 +43,7 @@ public class Table implements Serializable{
 		
 		if(!checkColumns(htblColNameType))
 			throw new DBAppException("Unsupported Datatype!");
-		
-		// Supported Types: java.lang.Integer, java.lang.String, java.lang.Double, 
-		// java.lang.Boolean and java.util.Date
-		
-		
+				
 		this.numOfCol = ColName_Type.size();
 		this.numOfRows = 0;
 		String pageName = this.tableName + "_1";
@@ -54,8 +51,7 @@ public class Table implements Serializable{
 		
 		this.lastPagePath = "../"+strTableName+"/"+pageName + ".ser";
 		this.pagePathes.add(this.lastPagePath);
-		this.freePagesPathes.add(this.lastPagePath);
-		
+				
 		try {
 			FileOutputStream fos = new FileOutputStream(this.lastPagePath);
 			ObjectOutputStream oos;
@@ -64,7 +60,7 @@ public class Table implements Serializable{
 			oos.close();
 			fos.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -129,12 +125,10 @@ public class Table implements Serializable{
 	    
 	    String pageName = this.tableName + "_" + pagePathes.size() + 1;
         Page page = new Page (pageName);
-        
-        this.freePagesPathes.remove(this.lastPagePath);
-        this.lastPagePath = "../"+tableName+"/"+pageName + ".ser";        
+       
+        this.lastPagePath = "../"+tableName+"/"+pageName + ".page";        
         this.pagePathes.add(this.lastPagePath);
-        this.freePagesPathes.add(this.lastPagePath);
-        
+           
         try {
             FileOutputStream fos = new FileOutputStream(this.lastPagePath);
             ObjectOutputStream oos;
@@ -152,8 +146,14 @@ public class Table implements Serializable{
 	}
 	
 	public void insertIntoPage(Hashtable<String,Object> htblColNameValue) throws DBAppException {
-	    
-	    String pagePath = getLastPagePath();
+		
+		String pagePath;
+		
+		if(this.freePagesPathes.size() == 0)     //here we check if there is another page free other than the last one
+			pagePath = getLastPagePath();
+		else {
+			pagePath = freePagesPathes.get(0);   //if we found a page we use it 
+		}
 	    
 	    try {
 	        
@@ -165,7 +165,7 @@ public class Table implements Serializable{
             fis.close();
             page.insertRow(htblColNameValue);
             
-            if(page.getNumOfRows() == 200)
+            if(page.getNumOfRows() == maxPageRowNumber)
                 createPage();
             
         } catch (IOException e) {
