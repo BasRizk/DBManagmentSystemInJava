@@ -60,6 +60,7 @@ public class Table implements Serializable{
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(page);
 			oos.close();
+			fos.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -128,11 +129,12 @@ public class Table implements Serializable{
 	    
 	    try {
 	        
-            FileInputStream fos = new FileInputStream(pagePath);
-            ObjectInputStream oos;
-            oos = new ObjectInputStream(fos);
-            Page page = (Page) oos.readObject();
-            oos.close();
+            FileInputStream fis = new FileInputStream(pagePath);
+            ObjectInputStream ois;
+            ois = new ObjectInputStream(fis);
+            Page page = (Page) ois.readObject();
+            ois.close();
+            fis.close();
             page.insertRow(htblColNameValue);
             
         } catch (IOException e) {
