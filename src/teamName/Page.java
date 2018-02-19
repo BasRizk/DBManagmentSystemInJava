@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import teamName.Tuple;
 
 public class Page implements Serializable {
 
@@ -24,7 +25,7 @@ public class Page implements Serializable {
 	private ArrayList<Tuple> rows;
 	private int numOfRows;
 	
-	public Page(String strtableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType, boolean firstTable) {
+	public Page(String strtableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType, boolean firstTable) throws DBAppException {
 		
 		this.tableName = strtableName;
 		this.primaryKey = strClusteringKeyColumn;
@@ -32,7 +33,9 @@ public class Page implements Serializable {
 		this.ColName_Type = htblColNameType;
 		this.ColName_Type.put("TouchData","java.util.Date");
 		
-		//TODO 9 - Check that each column has a valid type
+		if(!checkColumns(htblColNameType))
+			throw new DBAppException("Unsupported Datatype!");
+		
 		// Supported Types: java.lang.Integer, java.lang.String, java.lang.Double, 
 		// java.lang.Boolean and java.util.Date
 		
@@ -52,6 +55,22 @@ public class Page implements Serializable {
 		
 	}
 	
+
+	private boolean checkColumns(Hashtable<String, String> htblColNameType) {
+		
+		for (String key : htblColNameType.keySet()) {
+			if(!(htblColNameType.get(key).equals("java.lang.Integer")
+					|| htblColNameType.get(key).equals("java.lang.String") 
+					|| htblColNameType.get(key).equals("java.lang.Double")
+					|| htblColNameType.get(key).equals("java.lang.Boolean")
+					|| htblColNameType.get(key).equals("java.util.Date")) ){
+				return false;
+			}
+		}
+		return true;
+		
+	}
+
 
 	private void createMetadataFile() {
 		
