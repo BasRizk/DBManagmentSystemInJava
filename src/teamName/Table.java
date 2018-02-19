@@ -2,9 +2,11 @@ package teamName;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -113,6 +115,31 @@ public class Table implements Serializable{
 			
 		}
 
+	}
+	
+	public void insertIntoPage(Hashtable<String,Object> htblColNameValue) throws DBAppException {
+	    
+	    String pagePath = getLastPagePath();
+	    
+	    try {
+	        
+            FileInputStream fos = new FileInputStream(pagePath);
+            ObjectInputStream oos;
+            oos = new ObjectInputStream(fos);
+            Page page = (Page) oos.readObject();
+            oos.close();
+            page.insertRow(htblColNameValue);
+            
+        } catch (IOException e) {
+            //TODO Auto-generated catch block
+            e.printStackTrace();
+        
+        } catch (ClassNotFoundException c) {
+            
+            throw new DBAppException("Page not Found");
+        
+        }
+	    
 	}
 	
 	public boolean isIndexed(String colName) {

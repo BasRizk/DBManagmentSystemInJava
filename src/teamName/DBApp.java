@@ -1,11 +1,5 @@
 package teamName;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -58,18 +52,33 @@ public class DBApp {
 	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 
 			throws DBAppException {
 		
-		Page target = null;
-		
+	    Table table = null;
+	    
 		//TODO 3 Loop over all Pages (files) and get the target table
 		
-		if(target != null) {
+		for (Table tableSearch : tables) {
+            if(tableSearch.getName().equals(strTableName)) {
+                table = tableSearch;
+                break;
+            }
+		} 
+		
+		if (table!= null)
+		    table.insertIntoPage(htblColNameValue);
+		else
+		    throw new DBAppException("Table does not exist.");
+		
+		
+        /*String pagePath = table.getLastPagePath();
+        Page page = 
+        
+		if( != null) {
 			if(target.getNumOfRows() < 200 ) {
-				target.insertRow(htblColNameValue);
-				
+				page.insertRow(htblColNameValue);
 			}else {
 				//TODO 4 create another table with the same name somehow !
 			}
-		}
+		}*/
 
 	
 		
