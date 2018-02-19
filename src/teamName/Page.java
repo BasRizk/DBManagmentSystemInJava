@@ -1,12 +1,7 @@
 package teamName;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import teamName.Tuple;
 
@@ -29,9 +24,7 @@ public class Page implements Serializable {
 		this.pageName = pageName;
 		this.rows = new ArrayList<Tuple>();
 		this.numOfRows = rows.size();
-		
-		//TODO 10 Meta data if first instance of table
-				
+						
 	}
 		
 	public void insertRow(Hashtable<String, Object> htblColNameValue) {
@@ -45,6 +38,11 @@ public class Page implements Serializable {
 	public int getNumOfRows() {
 		return numOfRows;
 	}
+
+	public String getPageName() {
+		return pageName;
+	}
+	
 
 
 

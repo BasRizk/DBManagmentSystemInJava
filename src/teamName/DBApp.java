@@ -69,7 +69,7 @@ public class DBApp {
 		if (table!= null)
 		    table.insertIntoPage(htblColNameValue);
 		else
-		    throw new DBAppException("Table does not exist.");
+		    throw new DBAppException("Table does not exist!");
 		
 		
         /*String pagePath = table.getLastPagePath();
@@ -79,7 +79,7 @@ public class DBApp {
 			if(target.getNumOfRows() < 200 ) {
 				page.insertRow(htblColNameValue);
 			}else {
-				//TODO 4 create another table with the same name somehow !
+				//4 create another table with the same name somehow !
 			}
 		}*/
 

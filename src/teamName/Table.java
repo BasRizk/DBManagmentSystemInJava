@@ -3,6 +3,7 @@ package teamName;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,10 +22,10 @@ public class Table implements Serializable{
 	private static final long serialVersionUID = 8010842808275391794L;
 	
 	private String tableName;
-	private int size;
 	private String primaryKey;
 	private Hashtable<String, String> ColName_Type;
 	private ArrayList<String> pagePathes;
+	private ArrayList<String> freePagesPathes;
 	private String lastPagePath;
 	private int numOfRows;
 	private int numOfCol;
@@ -48,11 +49,12 @@ public class Table implements Serializable{
 		
 		this.numOfCol = ColName_Type.size();
 		this.numOfRows = 0;
-		String pageName = this.tableName + "_0001";
+		String pageName = this.tableName + "_1";
 		Page page = new Page (pageName);
 		
 		this.lastPagePath = "../"+strTableName+"/"+pageName + ".ser";
 		this.pagePathes.add(this.lastPagePath);
+		this.freePagesPathes.add(this.lastPagePath);
 		
 		try {
 			FileOutputStream fos = new FileOutputStream(this.lastPagePath);
@@ -128,8 +130,10 @@ public class Table implements Serializable{
 	    String pageName = this.tableName + "_" + pagePathes.size() + 1;
         Page page = new Page (pageName);
         
-        this.lastPagePath = "../"+tableName+"/"+pageName + ".ser";
+        this.freePagesPathes.remove(this.lastPagePath);
+        this.lastPagePath = "../"+tableName+"/"+pageName + ".ser";        
         this.pagePathes.add(this.lastPagePath);
+        this.freePagesPathes.add(this.lastPagePath);
         
         try {
             FileOutputStream fos = new FileOutputStream(this.lastPagePath);
@@ -142,6 +146,8 @@ public class Table implements Serializable{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        serializeTable();
 	    
 	}
 	
@@ -159,14 +165,7 @@ public class Table implements Serializable{
             fis.close();
             page.insertRow(htblColNameValue);
             
-            FileOutputStream fos = new FileOutputStream(pagePath);
-            ObjectOutputStream oos;
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(page);
-            oos.close();
-            fos.close();
-            
-            if(/* Number of rows of last page*/ == 200)
+            if(page.getNumOfRows() == 200)
                 createPage();
             
         } catch (IOException e) {
@@ -179,6 +178,30 @@ public class Table implements Serializable{
         
         }
 	    
+	    serializeTable();	    
+	}
+	
+	private void serializeTable() {
+		
+		String tablePath = "../Tables/"+tableName+".table";
+        
+		try {
+			
+            FileOutputStream fos = new FileOutputStream(tablePath);
+            ObjectOutputStream oos;
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(tablePath);
+            oos.close();
+            fos.close();
+	        
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	public boolean isIndexed(String colName) {
@@ -192,15 +215,24 @@ public class Table implements Serializable{
 	public String getName() {
 		return tableName;
 	}
-	public int getSize() {
-		return size;
-	}
+
 	public ArrayList<String> getPagePathes() {
 		return pagePathes;
 	}
+	
 	public String getLastPagePath() {
 		return lastPagePath;
 	}
+
+	public int getNumOfRows() {
+		return numOfRows;
+	}
+
+	public int getNumOfCol() {
+		return numOfCol;
+	}
+	
+	
 	
 	
 }
