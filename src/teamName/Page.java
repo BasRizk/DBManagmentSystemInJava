@@ -16,7 +16,7 @@ public class Page implements Serializable {
 	 */
 	private static final long serialVersionUID = 8010842808275391794L;
 	
-	private String PageName;
+	private String tableName;
 	private String primaryKey;
 	private Hashtable<String, String> ColName_Type;
 	private int numOfCol;
@@ -24,30 +24,42 @@ public class Page implements Serializable {
 	private ArrayList<Tuple> rows;
 	private int numOfRows;
 	
-	public Page(String strPageName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType) {
+	public Page(String strtableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType, boolean firstTable) {
 		
-		this.PageName = strPageName;
+		this.tableName = strtableName;
 		this.primaryKey = strClusteringKeyColumn;
-		this.ColName_Type = htblColNameType;
 		
-		//TODO - Check that each column has a valid type
+		this.ColName_Type = htblColNameType;
+		this.ColName_Type.put("TouchData","java.util.Date");
+		
+		//TODO 9 - Check that each column has a valid type
 		// Supported Types: java.lang.Integer, java.lang.String, java.lang.Double, 
 		// java.lang.Boolean and java.util.Date
+		
 		
 		this.numOfCol = ColName_Type.size();
 
 		this.rows = new ArrayList<Tuple>();
 		this.numOfRows = rows.size();
 		
-		this.createMetadataFile();
+		
+		//TODO 10 Meta data if first instance of table
+		
+		if(firstTable) {
+			this.createMetadataFile();
+		}
+		
 		
 	}
+	
 
-	public void createMetadataFile() {
+	private void createMetadataFile() {
 		
-		String fileName = "meta_data.csv";
+		//TODO 9 metadata file for all tables
 		
-		String data = "\n";
+		String fileName = "metadata.csv";
+		
+		String data = "";
 		
 		Enumeration<String> colNames = ColName_Type.keys();
 		
@@ -59,7 +71,7 @@ public class Page implements Serializable {
 			
 			boolean isIndexed = isIndexed(colName);
 			
-			data = data +  PageName + ", " + colName + ", " + colType + ", " +
+			data = data +  tableName + ", " + colName + ", " + colType + ", " +
 						isKey + ", " + isIndexed + "\n";
 		}
 		
@@ -81,22 +93,22 @@ public class Page implements Serializable {
 	}
 	
 	public void insertRow(Hashtable<String, Object> htblColNameValue) {
-		// TODO Auto-generated method stub
+		// TODO 10 insertRow 
 		
 	}
 	
 	public boolean isIndexed(String colName) {
-		//TODO depends on indexing way later
+		//TODO 11 depends on indexing way later
 		return false;
 	}
 
 	public String getPageName() {
-		return PageName;
+		return tableName;
 	}
 
 
-	public void setPageName(String PageName) {
-		this.PageName = PageName;
+	public void setPageName(String tableName) {
+		this.tableName = tableName;
 	}
 
 

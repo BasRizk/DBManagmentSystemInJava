@@ -2,21 +2,16 @@ package teamName;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 public class DBApp {
 	
-	Hashtable<String, ArrayList<Page>> nameAllTables;
-	
-	public DBApp() throws IOException {
-		
-		nameAllTables = new Hashtable<String, ArrayList<Page>>();
-		
-	}
 
 	public void init() {
 		
@@ -28,25 +23,45 @@ public class DBApp {
 	public void createTable(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType)
 			throws DBAppException {
 		
-		//TODO
 		
-		Page table = new Page (strTableName, strClusteringKeyColumn, htblColNameType);
 		
-		if(!nameAllTables.contains(strTableName)) {
+		//TODO 1 Check if Page's table already existed before
+		
+		int numOfPages = getNumOfPages(strTableName);
+		boolean firstTable = (numOfPages == 0)? true: false;
+		
+
+		Page page = new Page (strTableName, strClusteringKeyColumn, htblColNameType, firstTable);
+		
+		if(getNumOfPages(strTableName) == 0) {
 			
-			nameAllTables.put(strTableName, new ArrayList<Page>());
+			try {
+				FileOutputStream fos = new FileOutputStream(strTableName + ".ser");
+				ObjectOutputStream oos;
+				oos = new ObjectOutputStream(fos);
+				oos.writeObject(page);
+				oos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} else {
+			
+			throw new DBAppException("This table already exists.");
 			
 		}
-		
-		nameAllTables.get(strTableName).add(table);
 
+
+
+		
 	
 	}
 
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
-		//TODO
+		//TODO 2 createBRINindex
 	
 	}
 
@@ -55,13 +70,14 @@ public class DBApp {
 		
 		Page target = null;
 		
-		target = nameAllTables.get(strTableName).get(-1);
+		//TODO 3 Loop over all Pages (files) and get the target table
 		
 		if(target != null) {
-			if(target.getNumOfRows() < 250 ) {
+			if(target.getNumOfRows() < 200 ) {
 				target.insertRow(htblColNameValue);
+				
 			}else {
-				//TODO create another table with the same name somehow !
+				//TODO 4 create another table with the same name somehow !
 			}
 		}
 
@@ -72,14 +88,14 @@ public class DBApp {
 	public void updateTable(String strTableName, String strKey, Hashtable<String,Object> htblColNameValue )
 			throws DBAppException {
 		
-		//TODO
+		//TODO 5 updateTable
 	
 	}
 
 	public void deleteFromTable(String strTableName, Hashtable<String,Object> htblColNameValue)
 			throws DBAppException {
 		
-		//TODO
+		//TODO 6 deleteFromTable
 	
 	}
 
@@ -87,7 +103,7 @@ public class DBApp {
 			String[] strarrOperators) throws DBAppException {
 
 		
-		//TODO
+		//TODO 7 selectFromTable
 		
 		/*
 		 
@@ -127,6 +143,13 @@ public class DBApp {
 		
 		return null;
 
+	}
+	
+	private static int getNumOfPages(String strTableName) {
+		
+		//TODO 8 getNumOfPages following tableName , return 0 if non
+		
+		return 0;
 	}
 	
 }
