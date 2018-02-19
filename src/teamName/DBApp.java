@@ -1,6 +1,7 @@
 package teamName;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -53,6 +54,8 @@ public class DBApp {
 			throws DBAppException {
 		
 	    Table table = null;
+	    Date date = new Date();
+	    htblColNameValue.put("TouchDate", date);
 	    
 		//TODO 3 Loop over all Pages (files) and get the target table
 		
