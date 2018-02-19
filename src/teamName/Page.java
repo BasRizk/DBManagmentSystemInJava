@@ -35,7 +35,11 @@ public class Page implements Serializable {
 	}
 		
 	public void insertRow(Hashtable<String, Object> htblColNameValue) {
-		// TODO 10 insertRow 
+		
+	    Tuple tuple = new Tuple(htblColNameValue);
+	    rows.add(tuple);
+	    this.numOfRows++;
+	    
 	}
 			
 	public int getNumOfRows() {

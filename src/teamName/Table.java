@@ -123,6 +123,28 @@ public class Table implements Serializable{
 
 	}
 	
+	private void createPage() {
+	    
+	    String pageName = this.tableName + "_" + pagePathes.size() + 1;
+        Page page = new Page (pageName);
+        
+        this.lastPagePath = "../"+tableName+"/"+pageName + ".ser";
+        this.pagePathes.add(this.lastPagePath);
+        
+        try {
+            FileOutputStream fos = new FileOutputStream(this.lastPagePath);
+            ObjectOutputStream oos;
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(page);
+            oos.close();
+            fos.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    
+	}
+	
 	public void insertIntoPage(Hashtable<String,Object> htblColNameValue) throws DBAppException {
 	    
 	    String pagePath = getLastPagePath();
@@ -136,6 +158,16 @@ public class Table implements Serializable{
             ois.close();
             fis.close();
             page.insertRow(htblColNameValue);
+            
+            FileOutputStream fos = new FileOutputStream(pagePath);
+            ObjectOutputStream oos;
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(page);
+            oos.close();
+            fos.close();
+            
+            if(/* Number of rows of last page*/ == 200)
+                createPage();
             
         } catch (IOException e) {
             //TODO Auto-generated catch block
