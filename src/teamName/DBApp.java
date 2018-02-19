@@ -12,49 +12,39 @@ import java.util.Iterator;
 
 public class DBApp {
 	
+	private ArrayList<Table> tables;
 
 	public void init() {
 		
 		// TODO this does whatever initialization you would like
 		// no idea what should we do with this, as we have already a constructor !
+		
 	
 	}
 
 	public void createTable(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType)
 			throws DBAppException {
 		
-		
-		
 		//TODO 1 Check if Page's table already existed before
-		
-		int numOfPages = getNumOfPages(strTableName);
-		boolean firstTable = (numOfPages == 0)? true: false;
+
+		//int numOfPages = getNumOfPages(strTableName).size();
+		//boolean firstTable = (numOfPages == 0)? true: false;
 		
 
-		Page page = new Page (strTableName, strClusteringKeyColumn, htblColNameType, firstTable);
 		
-		if(getNumOfPages(strTableName) == 0) {
+		
+		//Page page = new Page (strTableName, strClusteringKeyColumn, htblColNameType, firstTable);
+		
+		if(!tableExists(strTableName)) {       //getNumOfPages(strTableName).size() != 0) {
 			
-			try {
-				FileOutputStream fos = new FileOutputStream(strTableName + ".ser");
-				ObjectOutputStream oos;
-				oos = new ObjectOutputStream(fos);
-				oos.writeObject(page);
-				oos.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType);
+			tables.add(table);
 			
 		} else {
 			
 			throw new DBAppException("This table already exists.");
 			
-		}
-
-
-
-		
+		}		
 	
 	}
 
@@ -145,11 +135,22 @@ public class DBApp {
 
 	}
 	
-	private static int getNumOfPages(String strTableName) {
+	private boolean tableExists(String tableName) {
+		for (Table table : tables) {
+			if(table.getName().equals(tableName))
+				return true;
+		}
+		return false;
+	}
+	
+	private static ArrayList<Page> getNumOfPages(String strTableName) {
+		
+		ArrayList<Page> tablePages = new ArrayList<Page>();
+		
 		
 		//TODO 8 getNumOfPages following tableName , return 0 if non
 		
-		return 0;
+		return tablePages;
 	}
 	
 }
