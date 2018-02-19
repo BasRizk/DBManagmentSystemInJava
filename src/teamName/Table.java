@@ -48,11 +48,14 @@ public class Table implements Serializable{
 		
 		this.numOfCol = ColName_Type.size();
 		this.numOfRows = 0;
+		String pageName = this.tableName + "_0001";
+		Page page = new Page (pageName);
 		
-		Page page = new Page (this.tableName + "_0001");
-				
+		this.lastPagePath = "../"+strTableName+"/"+pageName + ".ser";
+		this.pagePathes.add(this.lastPagePath);
+		
 		try {
-			FileOutputStream fos = new FileOutputStream(strTableName + ".ser");
+			FileOutputStream fos = new FileOutputStream(this.lastPagePath);
 			ObjectOutputStream oos;
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(page);
@@ -61,6 +64,8 @@ public class Table implements Serializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		createMetadataFile();
 		
 	}
 	
