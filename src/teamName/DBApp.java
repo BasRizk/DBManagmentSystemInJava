@@ -12,7 +12,10 @@ import java.util.Iterator;
 public class DBApp {
 	
 	private ArrayList<Table> tables;
-
+	
+	public DBApp() {
+		tables = new ArrayList<Table>();
+	}
 	public void init() {
 		
 		// TODO this does whatever initialization you would like
@@ -21,7 +24,7 @@ public class DBApp {
 
 			
     	try {
-    		File folder = new File("../Tables/");
+    		File folder = new File("Tables/");
     		File[] listOfFiles = folder.listFiles();
     		FileInputStream fileInput = null;
             ObjectInputStream in = null;
@@ -43,6 +46,8 @@ public class DBApp {
     	} catch(ClassNotFoundException ex) {
         	//TODO
             System.out.println("ClassNotFoundException is caught");
+        }catch(NullPointerException ex) {
+        	System.out.println(ex.getMessage());
         }
 	        
     } 

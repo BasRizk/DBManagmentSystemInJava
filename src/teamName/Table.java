@@ -35,6 +35,9 @@ public class Table implements Serializable{
 	
 	public Table(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType , int maxPageRowNumber) throws DBAppException {
 		
+		pagePathes = new ArrayList<String>();
+		freePagesPathes = new ArrayList<String>();
+		
 		this.tableName = strTableName;
 		this.primaryKey = strClusteringKeyColumn;
 		
@@ -49,7 +52,10 @@ public class Table implements Serializable{
 		String pageName = this.tableName + "_1";
 		Page page = new Page (pageName);
 		
-		this.lastPagePath = "../TablePages/"+strTableName+"/"+pageName + ".page";
+		File theDir = new File("TablePages/"+strTableName);
+		theDir.mkdirs();
+		
+		this.lastPagePath = "TablePages/"+strTableName+"/"+pageName + ".page";
 		this.pagePathes.add(this.lastPagePath);
 				
 		try {
@@ -65,6 +71,7 @@ public class Table implements Serializable{
 		}
 		
 		createMetadataFile();
+		serializeTable();
 		
 	}
 	
@@ -188,8 +195,10 @@ public class Table implements Serializable{
 	
 	private void serializeTable() {
 		
-		String tablePath = "../Tables/"+tableName+".table";
-        
+		String tablePath = "Tables/"+tableName+".table";
+		File theDir = new File("Tables/");
+		theDir.mkdirs();
+		
 		try {
 			
             FileOutputStream fos = new FileOutputStream(tablePath);
