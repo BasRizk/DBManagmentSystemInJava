@@ -1,5 +1,9 @@
 package teamName;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -14,8 +18,36 @@ public class DBApp {
 		// TODO this does whatever initialization you would like
 		// no idea what should we do with this, as we have already a constructor !
 		
+
+			
+    	try {
+    		File folder = new File("../Tables/");
+    		File[] listOfFiles = folder.listFiles();
+    		FileInputStream fileInput = null;
+            ObjectInputStream in = null;
+    	    for(File file : listOfFiles) {
+    	    	String filename = file.getName();
+				fileInput = new FileInputStream(filename);
+				
+		        in = new ObjectInputStream(fileInput);
+				
+				Table table = (Table) in.readObject();
+		        tables.add(table);
+    	    }    
+	        in.close();
+	        fileInput.close();
+    	}
+    	 catch(IOException ex) {
+    		//TODO
+            System.out.println("IOException is caught");
+    	} catch(ClassNotFoundException ex) {
+        	//TODO
+            System.out.println("ClassNotFoundException is caught");
+        }
+	        
+    } 
 	
-	}
+	
 
 	public void createTable(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType)
 			throws DBAppException {

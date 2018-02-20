@@ -49,7 +49,7 @@ public class Table implements Serializable{
 		String pageName = this.tableName + "_1";
 		Page page = new Page (pageName);
 		
-		this.lastPagePath = "../"+strTableName+"/"+pageName + ".ser";
+		this.lastPagePath = "../TablePages/"+strTableName+"/"+pageName + ".page";
 		this.pagePathes.add(this.lastPagePath);
 				
 		try {
@@ -165,8 +165,13 @@ public class Table implements Serializable{
             fis.close();
             page.insertRow(htblColNameValue);
             
-            if(page.getNumOfRows() == maxPageRowNumber)
-                createPage();
+            if(page.getNumOfRows() == maxPageRowNumber) {
+            	if(pagePath.equals(lastPagePath))
+            		createPage();
+            	else
+            		freePagesPathes.remove(pagePath);
+            }
+            
             
         } catch (IOException e) {
             //TODO Auto-generated catch block
