@@ -70,7 +70,11 @@ public class Table implements Serializable{
 			e.printStackTrace();
 		}
 		
-		createMetadataFile();
+		//Create meta-data file only on the first page
+		if(this.pagePathes.size() == 1) {
+			createMetadataFile();
+
+		}
 		serializeTable();
 		
 	}
@@ -95,7 +99,7 @@ public class Table implements Serializable{
 		
 		//COMPLETED 9 metadata file for all tables
 		
-		String filePath = "../../data/metadata.csv";
+		String filePath = "data\\metadata.csv";
 		
 		String data = "";
 		
@@ -125,7 +129,7 @@ public class Table implements Serializable{
 			System.out.println(e);
 			
 		}
-
+		
 	}
 	
 	private void createPage() {

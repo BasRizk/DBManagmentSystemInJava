@@ -1,6 +1,7 @@
 package teamName;
 
 import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -20,20 +21,22 @@ public class DBApp {
 		
 		
 		//Creating the global meta-data file
-		String metadataPath = "../../data/metadata.csv";
 		
-		try {
-			
-			File f = new File(metadataPath);
-			f.getParentFile().mkdirs();
-			f.createNewFile();
 
+		String metadataPath = "data\\metadata.csv";
+		File metadataFile = new File(metadataPath);
 		
-		} catch (IOException e) {
-			
-			System.out.println("Could not write meta data file");
-			
+		
+		if(!metadataFile.exists()) {
+			try {
+				metadataFile.getParentFile().mkdirs(); 
+				metadataFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
+
 	}
 	public void init() {
 		

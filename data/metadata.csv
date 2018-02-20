@@ -1,0 +1,8 @@
+Student, gpa, java.lang.Double, false, false
+Student, name, java.lang.String, false, false
+Student, TouchData, java.util.Date, false, false
+Student, id, java.lang.Integer, true, false
+Student2, gpa, java.lang.Double, false, false
+Student2, name, java.lang.String, false, false
+Student2, TouchData, java.util.Date, false, false
+Student2, id, java.lang.Integer, true, false
