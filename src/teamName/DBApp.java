@@ -1,7 +1,9 @@
 package teamName;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -15,6 +17,23 @@ public class DBApp {
 	
 	public DBApp() {
 		tables = new ArrayList<Table>();
+		
+		
+		//Creating the global meta-data file
+		String metadataPath = "../../data/metadata.csv";
+		
+		try {
+			
+			File f = new File(metadataPath);
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+
+		
+		} catch (IOException e) {
+			
+			System.out.println("Could not write meta data file");
+			
+		}
 	}
 	public void init() {
 		

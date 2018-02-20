@@ -18,7 +18,8 @@ public class Page implements Serializable {
 	
 	public Page(String pageName) {
 				
-		// Supported Types: java.lang.Integer, java.lang.String, java.lang.Double, 
+		// Supported Types:
+		// java.lang.Integer, java.lang.String, java.lang.Double, 
 		// java.lang.Boolean and java.util.Date
 		
 		this.pageName = pageName;

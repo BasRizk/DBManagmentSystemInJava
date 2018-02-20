@@ -93,9 +93,9 @@ public class Table implements Serializable{
 	
 	private void createMetadataFile() {
 		
-		//TODO 9 metadata file for all tables
+		//COMPLETED 9 metadata file for all tables
 		
-		String fileName = "metadata.csv";
+		String filePath = "../../data/metadata.csv";
 		
 		String data = "";
 		
@@ -115,7 +115,7 @@ public class Table implements Serializable{
 		
 		try {
 			
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(fileName)));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true));
 			
 			bw.write(data);
 			bw.close();
