@@ -49,15 +49,21 @@ public class Table implements Serializable{
 				
 		this.numOfCol = ColName_Type.size();
 		this.numOfRows = 0;
+
+		File pagesDir = new File("TablePages/"+strTableName);
+		pagesDir.mkdirs();
+		
+		
+		// Creating first page using the method
+		createPage();
+		
+		/*
 		String pageName = this.tableName + "_1";
 		Page page = new Page (pageName);
 		
-		File theDir = new File("TablePages/"+strTableName);
-		theDir.mkdirs();
-		
-		this.lastPagePath = "TablePages/"+strTableName+"/"+pageName + ".page";
+		this.lastPagePath = "TablePages/" + strTableName + "/" + pageName + ".page";
 		this.pagePathes.add(this.lastPagePath);
-				
+		
 		try {
 			FileOutputStream fos = new FileOutputStream(this.lastPagePath);
 			ObjectOutputStream oos;
@@ -69,10 +75,11 @@ public class Table implements Serializable{
 			
 			e.printStackTrace();
 		}
+		*/
 		
 		//Create meta-data file only on the first page
 		if(this.pagePathes.size() == 1) {
-			createMetadataFile();
+			appendToMetadataFile();
 
 		}
 		serializeTable();
@@ -95,10 +102,8 @@ public class Table implements Serializable{
 		
 	}
 	
-	private void createMetadataFile() {
-		
-		//COMPLETED 9 metadata file for all tables
-		
+	private void appendToMetadataFile() {
+				
 		String filePath = "data\\metadata.csv";
 		
 		String data = "";
@@ -134,12 +139,23 @@ public class Table implements Serializable{
 	
 	private void createPage() {
 	    
-	    String pageName = this.tableName + "_" + pagePathes.size() + 1;
+
+		// This was here before like that (Forget TablePages folder)
+        // this.lastPagePath = "../"+tableName+"/" + pageName + ".page";        
+        
+		// You forgot to add up pagePathes.size() + 1 first :D
+		
+	    String pageName = this.tableName + "_" + (pagePathes.size() + 1);
         Page page = new Page (pageName);
        
-        this.lastPagePath = "../"+tableName+"/"+pageName + ".page";        
+		//this.lastPagePath = "../TablePages/" + tableName + "/" + pageName + ".page";
+		this.lastPagePath = "TablePages/" + tableName + "/" + pageName + ".page";
         this.pagePathes.add(this.lastPagePath);
-           
+        
+        // Serialize the page you just created
+        page.serializePage(this.lastPagePath);
+        
+        /*
         try {
             FileOutputStream fos = new FileOutputStream(this.lastPagePath);
             ObjectOutputStream oos;
@@ -151,6 +167,7 @@ public class Table implements Serializable{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
         
         serializeTable();
 	    
@@ -220,6 +237,42 @@ public class Table implements Serializable{
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static Table deserializeTable(String tablePath) {
+		
+		Table table = null;
+		
+		try {
+	        
+            FileInputStream fis = new FileInputStream(tablePath);
+            ObjectInputStream ois;
+            ois = new ObjectInputStream(fis);
+            table = (Table) ois.readObject();
+            ois.close();
+            fis.close();
+            
+        } catch (Exception e) {
+            //TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+		
+		return table;
+	}
+	
+	public void printTableData() {
+		
+		System.out.println(tableName + " : " + numOfRows + " total num of rows: " + "\n");
+	
+		for(String key : ColName_Type.keySet()) {
+			System.out.print(ColName_Type.get(key).toString() + " : ");
+		}
+		
+		for(String path : pagePathes) {
+			System.out.println();
+			Page page = Page.deserializePage(path);
+			page.printPage();
+		}
 	}
 	
 	public boolean isIndexed(String colName) {

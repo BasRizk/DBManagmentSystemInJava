@@ -21,7 +21,6 @@ public class DBApp {
 		
 		
 		//Creating the global meta-data file
-		
 
 		String metadataPath = "data\\metadata.csv";
 		File metadataFile = new File(metadataPath);
@@ -42,14 +41,28 @@ public class DBApp {
 		
 		// TODO this does whatever initialization you would like
 		// no idea what should we do with this, as we have already a constructor !
-		
 
-			
+		File folder = new File("Tables/");
+		File[] listOfFiles = folder.listFiles();
+		
+        if(listOfFiles != null) {
+    	    for(File file : listOfFiles) {
+    	    	String filePath = file.getPath();
+    	    	System.out.println(filePath);
+
+    	    	Table table = Table.deserializeTable(filePath);
+    	        tables.add(table);
+    	    }    
+        }
+
+	    
+		/*	
     	try {
     		File folder = new File("Tables/");
     		File[] listOfFiles = folder.listFiles();
     		FileInputStream fileInput = null;
             ObjectInputStream in = null;
+            
     	    for(File file : listOfFiles) {
     	    	String filename = file.getName();
 				fileInput = new FileInputStream(filename);
@@ -59,8 +72,10 @@ public class DBApp {
 				Table table = (Table) in.readObject();
 		        tables.add(table);
     	    }    
+    	    
 	        in.close();
 	        fileInput.close();
+   
     	}
     	 catch(IOException ex) {
     		//TODO
@@ -71,7 +86,7 @@ public class DBApp {
         }catch(NullPointerException ex) {
         	System.out.println(ex.getMessage());
         }
-	        
+	    */
     } 
 	
 	
@@ -116,7 +131,6 @@ public class DBApp {
 	    Date date = new Date();
 	    htblColNameValue.put("TouchDate", date);
 	    
-		//TODO 3 Loop over all Pages (files) and get the target table
 		
 		for (Table tableSearch : tables) {
             if(tableSearch.getName().equals(strTableName)) {
@@ -129,20 +143,6 @@ public class DBApp {
 		    table.insertIntoPage(htblColNameValue);
 		else
 		    throw new DBAppException("Table does not exist!");
-		
-		
-        /*String pagePath = table.getLastPagePath();
-        Page page = 
-        
-		if( != null) {
-			if(target.getNumOfRows() < 200 ) {
-				page.insertRow(htblColNameValue);
-			}else {
-				//4 create another table with the same name somehow !
-			}
-		}*/
-
-	
 		
 	}
 
@@ -207,6 +207,7 @@ public class DBApp {
 	}
 	
 	private boolean tableExists(String tableName) {
+		this.init();
 		for (Table table : tables) {
 			if(table.getName().equals(tableName))
 				return true;
@@ -214,16 +215,15 @@ public class DBApp {
 		return false;
 	}
 	
-	private static ArrayList<Page> getNumOfPages(String strTableName) {
+	public void printDB() {
 		
-		ArrayList<Page> tablePages = new ArrayList<Page>();
-		
-		
-		//TODO 8 getNumOfPages following tableName , return 0 if non
-		
-		return tablePages;
+		System.out.println("This is all you have in the database: " + "\n");
+		for( Table table : tables) {
+			table.printTableData();
+			System.out.println();
+		}
+		System.out.println("Everything has been printed.");
 	}
-	
 }
 
 
