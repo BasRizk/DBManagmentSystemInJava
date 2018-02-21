@@ -98,7 +98,7 @@ public class Page implements Serializable {
 
 	public void printPage() {
 		
-		System.out.println(pageName + " : " + numOfRows + " rows: ");
+		System.out.println("---Page--- " + pageName + " : " + numOfRows + " rows: ");
 		for(Tuple row : rows) {
 			row.printTuple();
 		}

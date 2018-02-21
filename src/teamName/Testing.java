@@ -9,15 +9,19 @@ public class Testing {
 		//app.init();
 		
 		String strTableName = "Student";
-		Hashtable htblColNameType = new Hashtable( );
+		
+		Hashtable<String, String> htblColNameType = new Hashtable<String, String>( );
+		
 		htblColNameType.put("id", "java.lang.Integer");
 		htblColNameType.put("name", "java.lang.String");
 		htblColNameType.put("gpa", "java.lang.Double");
 		
 		app.createTable( strTableName, "id", htblColNameType );
-
 		
-		Hashtable htblColNameValue = new Hashtable( );
+		
+		//Insertion into Student Table
+		Hashtable<String, Object> htblColNameValue = new Hashtable<String, Object>( );
+		
 		htblColNameValue.put("id", new Integer( 2343432 ));
 		htblColNameValue.put("name", new String("Ahmed Noor" ) );
 		htblColNameValue.put("gpa", new Double( 0.95 ) );
@@ -56,13 +60,13 @@ public class Testing {
 		//Another table
 		
 		String strTableName2 = "Student2";
-		Hashtable htblColNameType2 = new Hashtable( );
+		Hashtable<String, String> htblColNameType2 = new Hashtable<String, String>( );
 		htblColNameType2.put("id", "java.lang.Integer");
 		htblColNameType2.put("name", "java.lang.String");
 		htblColNameType2.put("gpa", "java.lang.Double");
 		
 		app.createTable( strTableName2, "id", htblColNameType2 );
-
+		
 		
 	}
 }

@@ -183,7 +183,20 @@ public class Table implements Serializable{
 			pagePath = freePagesPathes.get(0);   //if we found a page we use it 
 		}
 	    
-	    try {
+		Page page = Page.deserializePage(pagePath);
+        page.insertRow(htblColNameValue);
+
+        if(page.getNumOfRows() == maxPageRowNumber) {
+        	if(pagePath.equals(lastPagePath))
+        		createPage();
+        	else
+        		freePagesPathes.remove(pagePath);
+        }
+		
+        page.serializePage(pagePath);
+      
+        /*
+		try {
 	        
             FileInputStream fis = new FileInputStream(pagePath);
             ObjectInputStream ois;
@@ -210,6 +223,7 @@ public class Table implements Serializable{
             throw new DBAppException("Page not Found");
         
         }
+        */
 	    
 	    serializeTable();	    
 	}
@@ -270,10 +284,11 @@ public class Table implements Serializable{
 		}
 		
 		for(String path : pagePathes) {
-			System.out.println();
+			System.out.println("\n");
 			Page page = Page.deserializePage(path);
 			page.printPage();
 		}
+		
 	}
 	
 	public boolean isIndexed(String colName) {
