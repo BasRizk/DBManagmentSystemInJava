@@ -17,7 +17,7 @@ public class Page implements Serializable {
 	/**
 	 *	Having a fixed serialVersionUID to be able to Deserialize objects on any version of java
 	 */
-	private static final long serialVersionUID = 8010842808275391794L;
+	private static final long serialVersionUID = 1L;
 		
 	private ArrayList<Tuple> rows;
 	private int numOfRows;
@@ -61,7 +61,7 @@ public class Page implements Serializable {
             FileOutputStream fos = new FileOutputStream(tablePath);
             ObjectOutputStream oos;
             oos = new ObjectOutputStream(fos);
-            oos.writeObject(tablePath);
+            oos.writeObject(this);
             oos.close();
             fos.close();
 	        

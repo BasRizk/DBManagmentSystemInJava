@@ -19,7 +19,7 @@ public class Table implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8010842808275391794L;
+	private static final long serialVersionUID = 1L;
 	
 	private String tableName;
 	private String primaryKey;
@@ -217,15 +217,15 @@ public class Table implements Serializable{
 	private void serializeTable() {
 		
 		String tablePath = "Tables/"+tableName+".table";
-		File theDir = new File("Tables/");
-		theDir.mkdirs();
+		File tableDir = new File("Tables/");
+		tableDir.mkdirs();
 		
 		try {
 			
             FileOutputStream fos = new FileOutputStream(tablePath);
             ObjectOutputStream oos;
             oos = new ObjectOutputStream(fos);
-            oos.writeObject(tablePath);
+            oos.writeObject(this);
             oos.close();
             fos.close();
 	        
@@ -246,9 +246,10 @@ public class Table implements Serializable{
 		try {
 	        
             FileInputStream fis = new FileInputStream(tablePath);
-            ObjectInputStream ois;
-            ois = new ObjectInputStream(fis);
-            table = (Table) ois.readObject();
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Object object  = ois.readObject();
+
+            table = (Table) object;
             ois.close();
             fis.close();
             

@@ -37,6 +37,7 @@ public class DBApp {
 		
 
 	}
+	
 	public void init() {
 		
 		// TODO this does whatever initialization you would like
@@ -48,7 +49,6 @@ public class DBApp {
         if(listOfFiles != null) {
     	    for(File file : listOfFiles) {
     	    	String filePath = file.getPath();
-    	    	System.out.println(filePath);
 
     	    	Table table = Table.deserializeTable(filePath);
     	        tables.add(table);
@@ -216,7 +216,7 @@ public class DBApp {
 	}
 	
 	public void printDB() {
-		
+		this.init();
 		System.out.println("This is all you have in the database: " + "\n");
 		for( Table table : tables) {
 			table.printTableData();

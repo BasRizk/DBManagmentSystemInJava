@@ -13,6 +13,8 @@ public class Tuple implements Serializable{
 		
 	}
 	
+	
+	
 	public void printTuple() {
 		
 		for(String key : colNameValue.keySet()) {
