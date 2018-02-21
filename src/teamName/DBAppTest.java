@@ -2,7 +2,7 @@ package teamName;
 
 import java.util.Hashtable;
 
-public class Testing {
+public class DBAppTest {
 	
 	public static void main(String[]args) throws DBAppException {
 		DBApp app = new DBApp();

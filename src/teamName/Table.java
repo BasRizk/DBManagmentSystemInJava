@@ -80,10 +80,8 @@ public class Table implements Serializable{
 		//Create meta-data file only on the first page
 		if(this.pagePathes.size() == 1) {
 			appendToMetadataFile();
-
 		}
-		serializeTable();
-		
+		serializeTable();		
 	}
 	
 	
@@ -224,7 +222,7 @@ public class Table implements Serializable{
         
         }
         */
-	    
+	    numOfRows++;
 	    serializeTable();	    
 	}
 	
