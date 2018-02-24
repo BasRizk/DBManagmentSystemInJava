@@ -110,9 +110,23 @@ public class DBApp {
 			throws DBAppException {
 		
 		//TODO 6 deleteFromTable
-	
+		this.init();
+		Table table = null;
+		for (Table tableToDelete : tables) {
+			if(tableToDelete.getName().equals(strTableName)){
+				table = tableToDelete;
+				break;
+				}			
+			}
+		if(table == null){
+			throw new DBAppException("Table does not exist");
+		}
+		else{
+			table.deleteFromPage(htblColNameValue);
+		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Iterator selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 

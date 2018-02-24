@@ -21,7 +21,11 @@ public class Page implements Serializable {
 	private ArrayList<Tuple> rows;
 	private int numOfRows;
 	private String pageName;
+	private boolean deleted;
 	
+	public boolean isDeleted() {
+		return deleted;
+	}
 	public Page(String pageName) {
 				
 		// Supported Types:
@@ -33,7 +37,16 @@ public class Page implements Serializable {
 		this.numOfRows = rows.size();
 						
 	}
-		
+	public void deleteRow(Hashtable<String, Object> htblColNameValue){
+		//TODO 
+		deleted = false;
+		for (Tuple tuple : rows) {
+			if(tuple.colNameValue == htblColNameValue){
+				rows.remove(tuple);
+				deleted = true;
+			}
+		}
+	}
 	public void insertRow(Hashtable<String, Object> htblColNameValue) {
 		
 	    Tuple tuple = new Tuple(htblColNameValue);
