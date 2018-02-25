@@ -41,10 +41,19 @@ public class Page implements Serializable {
 	public void deleteRow(Hashtable<String, Object> htblColNameValue){
 		//TODO 
 		deleted = false;
+		boolean found = true;
 		for (Tuple tuple : rows) {
-			if(tuple.colNameValue == htblColNameValue){
-				rows.remove(tuple);
-				deleted = true;
+			ArrayList<String> tupleKey = (ArrayList<String>) tuple.colNameValue.keySet();
+			for (String key : tupleKey) {
+				if(!htblColNameValue.get(key).equals(tuple.colNameValue.get(key))){
+					found = false;
+					break;
+			}
+				if(found){
+					rows.remove(htblColNameValue);
+					deleted = true;
+					break;
+				}
 			}
 		}
 	}
