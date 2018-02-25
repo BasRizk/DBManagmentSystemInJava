@@ -1,4 +1,4 @@
-package teamName;
+package TEAM_55;
 
 import java.util.Hashtable;
 
@@ -55,18 +55,7 @@ public class DBAppTest {
 		htblColNameValue.put("gpa", new Double( 0.88 ) );
 		
 		app.insertIntoTable( strTableName , htblColNameValue );
-		app.deleteFromTable( strTableName , htblColNameValue);
-		
-		//Another table
-		/*
-		String strTableName2 = "Student2";
-		Hashtable<String, String> htblColNameType2 = new Hashtable<String, String>( );
-		htblColNameType2.put("id", "java.lang.Integer");
-		htblColNameType2.put("name", "java.lang.String");
-		htblColNameType2.put("gpa", "java.lang.Double");
-		
-		app.createTable( strTableName2, "id", htblColNameType2 );*/
-		app.printDB();
+
 		
 		
 	}

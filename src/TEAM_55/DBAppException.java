@@ -1,4 +1,4 @@
-package teamName;
+package TEAM_55;
 
 public class DBAppException extends Exception {
 

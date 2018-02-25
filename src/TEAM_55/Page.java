@@ -1,4 +1,4 @@
-package teamName;
+package TEAM_55;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
-import teamName.Tuple;
+
+import TEAM_55.Tuple;
 
 public class Page implements Serializable {
 
@@ -56,24 +57,10 @@ public class Page implements Serializable {
 		
 		if(reqTuple != null) {
 		    rows.remove(rows.indexOf(reqTuple));
-		    numOfRows++;
+		    numOfRows--;
 		} else {
 		    System.out.println("Tuple does not exist");
 		}
-		    
-		    /*for (String key : tuple.colNameValue.keySet()) {
-				
-			    if(!htblColNameValue.get(key).equals(tuple.colNameValue.get(key))){
-					found = false;
-					break;
-				}
-				
-				if(found){
-					rows.remove(htblColNameValue);
-					deleted = true;
-					break;
-				}
-			}*/
 		
 	}
 	

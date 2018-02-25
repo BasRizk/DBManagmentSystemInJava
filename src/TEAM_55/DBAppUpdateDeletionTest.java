@@ -1,9 +1,9 @@
-package teamName;
+package TEAM_55;
 
 import java.util.Hashtable;
 
-public class DBAppTest2 {
-	
+public class DBAppUpdateDeletionTest {
+
 	public static void main(String[]args) throws DBAppException {
 		DBApp app = new DBApp();
 		
@@ -71,14 +71,9 @@ public class DBAppTest2 {
         
         
 		
-		app.printDB();
+		//app.printDB();
 		
-		//Page page = Page.deserializePage("TablePages/Student/Student_1.page");
-		
-		//page.printPage();
 		
 	}
-
-	
 	
 }

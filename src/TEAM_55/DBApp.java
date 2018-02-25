@@ -1,4 +1,4 @@
-package teamName;
+package TEAM_55;
 
 
 import java.io.File;
@@ -73,6 +73,8 @@ public class DBApp {
 	public void createTable(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType)
 			throws DBAppException {
 		
+		this.init();
+		
 		if(tableExists(strTableName) == null) {      
 			
 			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , maximumRowsCountinPage);
@@ -120,7 +122,6 @@ public class DBApp {
 	public void updateTable(String strTableName, String strKey, Hashtable<String,Object> htblColNameValue )
 			throws DBAppException {
 		
-		//TODO 5 updateTable
 		this.init();
 		Table table = tableExists(strTableName);
 		
@@ -135,7 +136,6 @@ public class DBApp {
 	public void deleteFromTable(String strTableName, Hashtable<String,Object> htblColNameValue)
 			throws DBAppException {
 		
-		//TODO 6 deleteFromTable
 		this.init();
 		Table table = null;
 		for (Table tableToDelete : tables) {
@@ -174,6 +174,7 @@ public class DBApp {
 	}
 	
 	public void printDB() {
+		
 		this.init();
 		System.out.println("This is all you have in the database: " + "\n");
 		for( Table table : tables) {

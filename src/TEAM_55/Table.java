@@ -1,4 +1,4 @@
-package teamName;
+package TEAM_55;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,26 +59,6 @@ public class Table implements Serializable{
 		// Creating first page using the method
 		createPage();
 		
-		/*
-		String pageName = this.tableName + "_1";
-		Page page = new Page (pageName);
-		
-		this.lastPagePath = "TablePages/" + strTableName + "/" + pageName + ".page";
-		this.pagePathes.add(this.lastPagePath);
-		
-		try {
-			FileOutputStream fos = new FileOutputStream(this.lastPagePath);
-			ObjectOutputStream oos;
-			oos = new ObjectOutputStream(fos);
-			oos.writeObject(page);
-			oos.close();
-			fos.close();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		*/
-		
 		//Create meta-data file only on the first page
 		if(this.pagePathes.size() == 1) {
 			appendToMetadataFile();
@@ -138,10 +118,7 @@ public class Table implements Serializable{
 	}
 	
 	private void createPage() {
-	    
-
-		// This was here before like that (Forget TablePages folder)
-        // this.lastPagePath = "../"+tableName+"/" + pageName + ".page";        
+	     
         
 		// You forgot to add up pagePathes.size() + 1 first :D
 		
@@ -155,35 +132,27 @@ public class Table implements Serializable{
         // Serialize the page you just created
         page.serializePage(this.lastPagePath);
         
-        /*
-        try {
-            FileOutputStream fos = new FileOutputStream(this.lastPagePath);
-            ObjectOutputStream oos;
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(page);
-            oos.close();
-            fos.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
-        
         serializeTable();
 	    
 	}
 	public void deleteFromPage(Hashtable<String,Object> htblColNameValue) throws DBAppException {
-		//TODO Delete certain record from page
+
 		Page page = null;
 		
 		for (String path : pagePathes) {
+			
 			page = Page.deserializePage(path);
+			
 			page.deleteRow(htblColNameValue, this.primaryKey);
+			
 			page.serializePage(path);
-			if(page.isDeleted() && !(freePagesPathes.contains(path))) {   //check if recoreds had been deleted from the page to put it in freepage array
+			
+			if(page.isDeleted() && !(freePagesPathes.contains(path))) {   //check if records had been deleted from the page to put it in freepage array
 				freePagesPathes.add(path);			
 			}
 		}
+		
+		numOfRows--;
 		
 		serializeTable();
 		
@@ -211,35 +180,6 @@ public class Table implements Serializable{
 		
         page.serializePage(pagePath);
       
-        /*
-		try {
-	        
-            FileInputStream fis = new FileInputStream(pagePath);
-            ObjectInputStream ois;
-            ois = new ObjectInputStream(fis);
-            Page page = (Page) ois.readObject();
-            ois.close();
-            fis.close();
-            page.insertRow(htblColNameValue);
-            
-            if(page.getNumOfRows() == maxPageRowNumber) {
-            	if(pagePath.equals(lastPagePath))
-            		createPage();
-            	else
-            		freePagesPathes.remove(pagePath);
-            }
-            
-            
-        } catch (IOException e) {
-            //TODO Auto-generated catch block
-            e.printStackTrace();
-        
-        } catch (ClassNotFoundException c) {
-            
-            throw new DBAppException("Page not Found");
-        
-        }
-        */
 	    numOfRows++;
 	    serializeTable();	    
 	}
@@ -340,11 +280,13 @@ public class Table implements Serializable{
 		
 		Page page = null;
 		String primaryKeyType = ColName_Type.get(this.primaryKey);
+		
 		for (String path : pagePathes) {
 			page = Page.deserializePage(path);
 			page.updateRow(strKey , this.primaryKey ,htblColNameValue, primaryKeyType);
 			page.serializePage(path);
 		}
+		
 		serializeTable();
 		
 	}
