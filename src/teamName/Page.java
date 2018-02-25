@@ -188,10 +188,11 @@ public class Page implements Serializable {
 				tuple.colNameValue.remove(key);
 				tuple.colNameValue.put(key, htblColNameValue.get(key));
 			}
+			
+			tuple.colNameValue.remove("TouchDate");
+			tuple.colNameValue.put("TouchDate", new Date());	
 		}
-		
-		tuple.colNameValue.remove("TouchDate");
-		tuple.colNameValue.put("TouchDate", new Date());		
+	
 					
 	}
 
