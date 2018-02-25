@@ -1,4 +1,4 @@
-package TEAM_55;
+package teamName;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 
-import TEAM_55.Tuple;
+import teamName.Tuple;
 
 public class Page implements Serializable {
 
@@ -175,10 +175,11 @@ public class Page implements Serializable {
 				tuple.colNameValue.remove(key);
 				tuple.colNameValue.put(key, htblColNameValue.get(key));
 			}
+			
+			tuple.colNameValue.remove("TouchDate");
+			tuple.colNameValue.put("TouchDate", new Date());	
 		}
-		
-		tuple.colNameValue.remove("TouchDate");
-		tuple.colNameValue.put("TouchDate", new Date());		
+	
 					
 	}
 

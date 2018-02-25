@@ -1,4 +1,4 @@
-package TEAM_55;
+package teamName;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;

@@ -1,10 +1,12 @@
-package TEAM_55;
+package teamName;
 
 import java.util.Hashtable;
 
 public class DBAppUpdateDeletionTest {
 
 	public static void main(String[]args) throws DBAppException {
+		
+		
 		DBApp app = new DBApp();
 		
 		String strTableName = "Emp";
@@ -20,14 +22,14 @@ public class DBAppUpdateDeletionTest {
         Hashtable<String, Object> htblColNameValue = new Hashtable<String, Object>( );
         
         htblColNameValue.put("id", new Integer( 2343432 ));
-        htblColNameValue.put("name", new String("Ahmed Noor" ) );
+        htblColNameValue.put("name", new String("Ahmed Atef" ) );
         htblColNameValue.put("gpa", new Double( 0.95 ) );
         
         app.insertIntoTable( strTableName , htblColNameValue );
         
         htblColNameValue.clear( );
         htblColNameValue.put("id", new Integer( 453455 ));
-        htblColNameValue.put("name", new String("Ahmed Noor" ) );
+        htblColNameValue.put("name", new String("Ahmed nassef" ) );
         htblColNameValue.put("gpa", new Double( 0.95 ) );
         
         app.insertIntoTable( strTableName , htblColNameValue );
@@ -42,14 +44,14 @@ public class DBAppUpdateDeletionTest {
         
         htblColNameValue.clear( );
         htblColNameValue.put("id", new Integer( 45340055 ));
-        htblColNameValue.put("name", new String("Ahmed Noor" ) );
+        htblColNameValue.put("name", new String("Ahmed rizk" ) );
         htblColNameValue.put("gpa", new Double( 0.95 ) );
         
         app.insertIntoTable( strTableName , htblColNameValue );
         
         htblColNameValue.clear( );
         htblColNameValue.put("id", new Integer( 45131455 ));
-        htblColNameValue.put("name", new String("Ahmed Noor" ) );
+        htblColNameValue.put("name", new String("Ahmed test" ) );
         htblColNameValue.put("gpa", new Double( 0.95 ) );
         
         app.insertIntoTable( strTableName , htblColNameValue );
@@ -68,10 +70,12 @@ public class DBAppUpdateDeletionTest {
         htblColNameValue.put("gpa", new Double( 0.96 ) );
         
         app.updateTable( strTableName , "453455", htblColNameValue );
-        
-        
+
+       
+		app.printDB();
 		
-		//app.printDB();
+		//Page page = Page.deserializePage("TablePages/Student/Student_1.page");
+
 		
 		
 	}

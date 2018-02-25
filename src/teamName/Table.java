@@ -1,4 +1,4 @@
-package TEAM_55;
+package teamName;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,7 +22,7 @@ public class Table implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private String tableName;
-	private String primaryKey;
+	private String primaryKeyName;
 	private Hashtable<String, String> ColName_Type;
 	private ArrayList<String> pagePathes;
 	private ArrayList<String> freePagesPathes; // contains free pages path does NOT contain lastPagePath
@@ -30,6 +30,7 @@ public class Table implements Serializable{
 	private int numOfRows = 0;
 	private int numOfCol;
 	private int maxPageRowNumber; //the maximum number of rows in 1 page for now 200;
+	private ArrayList<Object> primaryKeys;
 	
 	
 	
@@ -37,9 +38,10 @@ public class Table implements Serializable{
 		
 		pagePathes = new ArrayList<String>();
 		freePagesPathes = new ArrayList<String>();
-		
+		primaryKeys = new ArrayList<Object>();
+		System.out.println("hi");
 		this.tableName = strTableName;
-		this.primaryKey = strClusteringKeyColumn;
+		this.primaryKeyName = strClusteringKeyColumn;
 		
 		this.maxPageRowNumber = maxPageRowNumber;
 		
@@ -94,7 +96,7 @@ public class Table implements Serializable{
 			
 			String colName = colNames.nextElement();
 			String colType = ColName_Type.get(colName);
-			boolean isKey = colName == primaryKey;
+			boolean isKey = colName == primaryKeyName;
 			
 			boolean isIndexed = isIndexed(colName);
 			
@@ -139,21 +141,28 @@ public class Table implements Serializable{
 
 		Page page = null;
 		
+		Object key = primaryKeyExists(htblColNameValue.get(primaryKeyName));
+		
+		if(key != null)
+			primaryKeys.remove(key);
+		else
+			throw new DBAppException("This key does not exist");
+		
 		for (String path : pagePathes) {
 			
 			page = Page.deserializePage(path);
-			
-			page.deleteRow(htblColNameValue, this.primaryKey);
-			
+
+			page.deleteRow(htblColNameValue, this.primaryKeyName);
+
 			page.serializePage(path);
 			
 			if(page.isDeleted() && !(freePagesPathes.contains(path))) {   //check if records had been deleted from the page to put it in freepage array
 				freePagesPathes.add(path);			
 			}
 		}
-		
+
 		numOfRows--;
-		
+
 		serializeTable();
 		
 	}
@@ -167,6 +176,11 @@ public class Table implements Serializable{
 		else {
 			pagePath = freePagesPathes.get(0);   //if we found a page we use it 
 		}
+		
+		if(primaryKeyExists(htblColNameValue.get(primaryKeyName)) != null)
+			throw new DBAppException("This key already exists!");	
+		else
+			primaryKeys.add(htblColNameValue.get(primaryKeyName));
 	    
 		Page page = Page.deserializePage(pagePath);
         page.insertRow(htblColNameValue);
@@ -179,6 +193,8 @@ public class Table implements Serializable{
         }
 		
         page.serializePage(pagePath);
+        
+        
       
 	    numOfRows++;
 	    serializeTable();	    
@@ -246,7 +262,16 @@ public class Table implements Serializable{
 		}
 		
 	}
-	
+	private Object primaryKeyExists(Object newKey) {
+		Object reqKey = null;
+		for (Object key : primaryKeys) {
+			if(newKey.equals(key)) {
+				reqKey = key;
+				break;
+			}
+		}
+		return reqKey;
+	}
 	public boolean isIndexed(String colName) {
 		//TODO 11 depends on indexing way later
 		return false;
@@ -276,14 +301,29 @@ public class Table implements Serializable{
 	}
 
 
-	public void updateFromPage(String strKey, Hashtable<String, Object> htblColNameValue) {
+	public void updateFromPage(String strKey, Hashtable<String, Object> htblColNameValue) throws DBAppException {
 		
 		Page page = null;
-		String primaryKeyType = ColName_Type.get(this.primaryKey);
+
+		String primaryKeyType = ColName_Type.get(this.primaryKeyName);
+		
+		Object key = htblColNameValue.get(primaryKeyName);
+		
+		if(key != null) {
+			if(primaryKeyExists(htblColNameValue.get(primaryKeyName)) != null)
+				throw new DBAppException("cannot change the primary key value to this value because it already exists!");
+			else
+			{
+				primaryKeys.remove(strKey);
+				primaryKeys.add(htblColNameValue.get(primaryKeyName));
+				
+			}
+		}
+
 		
 		for (String path : pagePathes) {
 			page = Page.deserializePage(path);
-			page.updateRow(strKey , this.primaryKey ,htblColNameValue, primaryKeyType);
+			page.updateRow(strKey , this.primaryKeyName ,htblColNameValue, primaryKeyType);
 			page.serializePage(path);
 		}
 		

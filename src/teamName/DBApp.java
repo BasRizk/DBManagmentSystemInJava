@@ -1,5 +1,4 @@
-package TEAM_55;
-
+package teamName;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +9,7 @@ import java.util.Iterator;
 
 public class DBApp {
 	
-	private ArrayList<Table> tables;
+	public ArrayList<Table> tables;
 	private int maximumRowsCountinPage = 3;
 	
 	public DBApp() {
@@ -62,7 +61,9 @@ public class DBApp {
     	    	String filePath = file.getPath();
 
     	    	Table table = Table.deserializeTable(filePath);
-    	        tables.add(table);
+    	    	
+    	    	if(tableExists(table.getName()) == null)
+    	        	tables.add(table);
     	    }    
         }
 
@@ -137,13 +138,9 @@ public class DBApp {
 			throws DBAppException {
 		
 		this.init();
-		Table table = null;
-		for (Table tableToDelete : tables) {
-			if(tableToDelete.getName().equals(strTableName)){
-				table = tableToDelete;
-				break;
-			}			
-		}
+		
+		Table table = tableExists(strTableName);
+		
 		if(table == null){
 			throw new DBAppException("Table does not exist");
 		}
@@ -164,11 +161,14 @@ public class DBApp {
 	}
 	
 	private Table tableExists(String tableName) {
-		this.init();
+		//this.init();  //it makes stackoverflow , because in init method i call it so it.
 		Table reqTable = null;
 		for (Table table : tables) {
+			
 			if(table.getName().equals(tableName))
 				reqTable = table;
+			else
+				System.out.println(tableName +"............."+table.getName());
 		}
 		return reqTable;
 	}

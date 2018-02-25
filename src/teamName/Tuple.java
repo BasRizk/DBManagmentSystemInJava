@@ -1,4 +1,4 @@
-package TEAM_55;
+package teamName;
 
 import java.io.Serializable;
 import java.util.Hashtable;
