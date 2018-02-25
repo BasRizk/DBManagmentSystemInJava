@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import teamName.Tuple;
 
@@ -115,6 +116,35 @@ public class Page implements Serializable {
 			row.printTuple();
 		}
 		
+	}
+	
+	private Tuple findTuple(String strKey , String primaryKeyName) {
+		Tuple reqTuple = null;
+		for (Tuple tuple : rows) {
+			if(tuple.colNameValue.get(primaryKeyName).equals(strKey)) {
+				reqTuple = tuple;
+				break;
+			}
+				
+		}
+		return reqTuple;
+	}
+	
+	public void updateRow(String strKey, String primaryKeyName ,Hashtable<String, Object> htblColNameValue) {
+		// TODO page updateRow
+		Tuple tuple = findTuple(strKey, primaryKeyName);
+		ArrayList<String> keys = (ArrayList<String>) htblColNameValue.keySet();
+		
+		if(tuple != null) {
+			for (String key : keys) {  //updating each item in the hashtable of the tuple according to the provided hashtable
+				tuple.colNameValue.remove(key);
+				tuple.colNameValue.put(key, htblColNameValue.get(key));
+			}
+		}
+		
+		tuple.colNameValue.remove("TouchDate");
+		tuple.colNameValue.put("TouchDate", new Date());		
+					
 	}
 
 

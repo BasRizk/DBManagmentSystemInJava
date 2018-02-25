@@ -55,7 +55,7 @@ public class DBApp {
 	public void createTable(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType)
 			throws DBAppException {
 		
-		if(!tableExists(strTableName)) {      
+		if(tableExists(strTableName) == null) {      
 			
 			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , 200);
 			tables.add(table);
@@ -80,18 +80,18 @@ public class DBApp {
 		
 		this.init();
 		
-	    Table table = null;
+	    Table table = tableExists(strTableName);
 	    Date date = new Date();
 	    htblColNameValue.put("TouchDate", date);
 	    
-		
-		for (Table tableSearch : tables) {
+		/* 
+		for (Table tableSearch : tables) {   // implemented in tableExits Method
             if(tableSearch.getName().equals(strTableName)) {
                 table = tableSearch;
                 break;
             }
 		} 
-		
+		*/
 		if (table!= null)
 		    table.insertIntoPage(htblColNameValue);
 		else
@@ -103,6 +103,14 @@ public class DBApp {
 			throws DBAppException {
 		
 		//TODO 5 updateTable
+		this.init();
+		Table table = tableExists(strTableName);
+		
+		if (table!= null)
+		    table.updateFromPage(strKey ,htblColNameValue);
+		else
+		    throw new DBAppException("Table does not exist!");
+
 	
 	}
 
@@ -137,13 +145,14 @@ public class DBApp {
 
 	}
 	
-	private boolean tableExists(String tableName) {
+	private Table tableExists(String tableName) {
 		this.init();
+		Table reqTable = null;
 		for (Table table : tables) {
 			if(table.getName().equals(tableName))
-				return true;
+				reqTable = table;
 		}
-		return false;
+		return reqTable;
 	}
 	
 	public void printDB() {

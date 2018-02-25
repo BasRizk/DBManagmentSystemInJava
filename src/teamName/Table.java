@@ -330,6 +330,19 @@ public class Table implements Serializable{
 	public int getNumOfCol() {
 		return numOfCol;
 	}
+
+
+	public void updateFromPage(String strKey, Hashtable<String, Object> htblColNameValue) {
+		
+		Page page = null;
+		for (String path : pagePathes) {
+			page = Page.deserializePage(path);
+			page.updateRow(strKey , this.primaryKey ,htblColNameValue);
+			page.serializePage(path);
+		}
+		serializeTable();
+		
+	}
 	
 	
 	
