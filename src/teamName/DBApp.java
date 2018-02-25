@@ -124,8 +124,8 @@ public class DBApp {
 			if(tableToDelete.getName().equals(strTableName)){
 				table = tableToDelete;
 				break;
-				}			
-			}
+			}			
+		}
 		if(table == null){
 			throw new DBAppException("Table does not exist");
 		}

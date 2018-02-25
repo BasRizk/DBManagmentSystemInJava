@@ -173,14 +173,16 @@ public class Table implements Serializable{
 	public void deleteFromPage(Hashtable<String,Object> htblColNameValue) throws DBAppException {
 		//TODO Delete certain record from page
 		Page page = null;
+		
 		for (String path : pagePathes) {
 			page = Page.deserializePage(path);
-			page.deleteRow(htblColNameValue);
+			page.deleteRow(htblColNameValue, this.primaryKey);
 			page.serializePage(path);
-			if(page.isDeleted() && !(freePagesPathes.contains(path))){//check if recoreds had been deleted from the page to put it in freepage array
+			if(page.isDeleted() && !(freePagesPathes.contains(path))) {   //check if recoreds had been deleted from the page to put it in freepage array
 				freePagesPathes.add(path);			
-				}
+			}
 		}
+		
 		serializeTable();
 		
 	}

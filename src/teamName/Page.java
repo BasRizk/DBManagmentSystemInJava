@@ -38,25 +38,45 @@ public class Page implements Serializable {
 		this.numOfRows = rows.size();
 						
 	}
-	public void deleteRow(Hashtable<String, Object> htblColNameValue){
+	public void deleteRow(Hashtable<String, Object> htblColNameValue, String primaryKey){
 		//TODO 
-		deleted = false;
-		boolean found = true;
+		//deleted = false;
+		//boolean found = true;
+		
+	    Tuple reqTuple = null;
+	    
 		for (Tuple tuple : rows) {
-			ArrayList<String> tupleKey = (ArrayList<String>) tuple.colNameValue.keySet();
-			for (String key : tupleKey) {
-				if(!htblColNameValue.get(key).equals(tuple.colNameValue.get(key))){
+						
+		    if(htblColNameValue.get(primaryKey).equals(tuple.colNameValue.get(primaryKey))) {
+		        reqTuple = tuple;
+		        break;
+		    }
+		    
+		}
+		
+		if(reqTuple != null) {
+		    rows.remove(rows.indexOf(reqTuple));
+		    numOfRows++;
+		} else {
+		    System.out.println("Tuple does not exist");
+		}
+		    
+		    /*for (String key : tuple.colNameValue.keySet()) {
+				
+			    if(!htblColNameValue.get(key).equals(tuple.colNameValue.get(key))){
 					found = false;
 					break;
-			}
+				}
+				
 				if(found){
 					rows.remove(htblColNameValue);
 					deleted = true;
 					break;
 				}
-			}
-		}
+			}*/
+		
 	}
+	
 	public void insertRow(Hashtable<String, Object> htblColNameValue) {
 		
 	    Tuple tuple = new Tuple(htblColNameValue);
@@ -142,10 +162,9 @@ public class Page implements Serializable {
 	public void updateRow(String strKey, String primaryKeyName ,Hashtable<String, Object> htblColNameValue) {
 		// TODO page updateRow
 		Tuple tuple = findTuple(strKey, primaryKeyName);
-		ArrayList<String> keys = (ArrayList<String>) htblColNameValue.keySet();
 		
 		if(tuple != null) {
-			for (String key : keys) {  //updating each item in the hashtable of the tuple according to the provided hashtable
+			for (String key : htblColNameValue.keySet()) {  //updating each item in the hashtable of the tuple according to the provided hashtable
 				tuple.colNameValue.remove(key);
 				tuple.colNameValue.put(key, htblColNameValue.get(key));
 			}
