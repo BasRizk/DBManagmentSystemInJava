@@ -11,8 +11,18 @@ import java.util.Iterator;
 public class DBApp {
 	
 	private ArrayList<Table> tables;
+	private int maximumRowsCountinPage = 200;
 	
 	public DBApp() {
+	    
+	    /*DBAppConfig config = new DBAppConfig();
+        try {
+            maximumRowsCountinPage = config.getPropValues();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }*/
+	    
 		tables = new ArrayList<Table>();
 		
 		
@@ -35,6 +45,14 @@ public class DBApp {
 	}
 	
 	public void init() {
+	    
+	   /*DBAppConfig config = new DBAppConfig();
+	    try {
+            maximumRowsCountinPage = config.getPropValues();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }*/
 
 		File folder = new File("Tables/");
 		File[] listOfFiles = folder.listFiles();
@@ -57,7 +75,7 @@ public class DBApp {
 		
 		if(tableExists(strTableName) == null) {      
 			
-			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , 200);
+			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , maximumRowsCountinPage);
 			tables.add(table);
 			
 		} else {
