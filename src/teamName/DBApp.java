@@ -11,7 +11,7 @@ import java.util.Iterator;
 public class DBApp {
 	
 	private ArrayList<Table> tables;
-	private int maximumRowsCountinPage = 200;
+	private int maximumRowsCountinPage = 3;
 	
 	public DBApp() {
 	    
@@ -46,7 +46,7 @@ public class DBApp {
 	
 	public void init() {
 	    
-	   /*DBAppConfig config = new DBAppConfig();
+	    /*DBAppConfig config = new DBAppConfig();
 	    try {
             maximumRowsCountinPage = config.getPropValues();
         } catch (IOException e) {

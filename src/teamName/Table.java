@@ -27,7 +27,7 @@ public class Table implements Serializable{
 	private ArrayList<String> pagePathes;
 	private ArrayList<String> freePagesPathes; // contains free pages path does NOT contain lastPagePath
 	private String lastPagePath;
-	private int numOfRows;
+	private int numOfRows = 0;
 	private int numOfCol;
 	private int maxPageRowNumber; //the maximum number of rows in 1 page for now 200;
 	
@@ -40,6 +40,8 @@ public class Table implements Serializable{
 		
 		this.tableName = strTableName;
 		this.primaryKey = strClusteringKeyColumn;
+		
+		this.maxPageRowNumber = maxPageRowNumber;
 		
 		this.ColName_Type = htblColNameType;
 		this.ColName_Type.put("TouchData","java.util.Date");
@@ -337,9 +339,10 @@ public class Table implements Serializable{
 	public void updateFromPage(String strKey, Hashtable<String, Object> htblColNameValue) {
 		
 		Page page = null;
+		String primaryKeyType = ColName_Type.get(this.primaryKey);
 		for (String path : pagePathes) {
 			page = Page.deserializePage(path);
-			page.updateRow(strKey , this.primaryKey ,htblColNameValue);
+			page.updateRow(strKey , this.primaryKey ,htblColNameValue, primaryKeyType);
 			page.serializePage(path);
 		}
 		serializeTable();

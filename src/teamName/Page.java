@@ -147,7 +147,7 @@ public class Page implements Serializable {
 		
 	}
 	
-	private Tuple findTuple(String strKey , String primaryKeyName) {
+	private Tuple findTupleString(String strKey , String primaryKeyName) {
 		Tuple reqTuple = null;
 		for (Tuple tuple : rows) {
 			if(tuple.colNameValue.get(primaryKeyName).equals(strKey)) {
@@ -158,11 +158,31 @@ public class Page implements Serializable {
 		}
 		return reqTuple;
 	}
+
+    private Tuple findTupleInt(int intKey, String primaryKeyName) {
+        Tuple reqTuple = null;
+        for (Tuple tuple : rows) {
+            if (tuple.colNameValue.get(primaryKeyName).equals(intKey)) {
+                reqTuple = tuple;
+                break;
+            }
+
+        }
+        return reqTuple;
+    }
 	
-	public void updateRow(String strKey, String primaryKeyName ,Hashtable<String, Object> htblColNameValue) {
+	public void updateRow(String strKey, String primaryKeyName ,Hashtable<String, Object> htblColNameValue, String primaryKeyType) {
 		// TODO page updateRow
-		Tuple tuple = findTuple(strKey, primaryKeyName);
-		
+	    
+	    Tuple tuple = null;
+	    
+	    if(primaryKeyType.equals("java.lang.Integer")) {
+	        int intKey = Integer.parseInt(strKey);
+	        tuple = findTupleInt(intKey, primaryKeyName);
+	    } else {
+	        tuple = findTupleString(strKey, primaryKeyName);
+	    }
+	    
 		if(tuple != null) {
 			for (String key : htblColNameValue.keySet()) {  //updating each item in the hashtable of the tuple according to the provided hashtable
 				tuple.colNameValue.remove(key);
