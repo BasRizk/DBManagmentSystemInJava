@@ -1,6 +1,6 @@
 package TEAM_55;
 
-public class DBAppTest2 {
+public class DBAppDeSerializeTest {
 	
 	public static void main(String[]args) throws DBAppException {
 		DBApp app = new DBApp();

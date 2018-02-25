@@ -2,7 +2,7 @@ package TEAM_55;
 
 import java.util.Hashtable;
 
-public class DBAppTest {
+public class DBAppCreateInsertTest{
 	
 	public static void main(String[]args) throws DBAppException {
 		DBApp app = new DBApp();
