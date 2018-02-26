@@ -55,15 +55,14 @@ public class DBApp {
 
 		File folder = new File("Tables/");
 		File[] listOfFiles = folder.listFiles();
+		tables.clear();  //clearing the array to avoid having duplicates
 		
         if(listOfFiles != null) {
     	    for(File file : listOfFiles) {
     	    	String filePath = file.getPath();
 
-    	    	Table table = Table.deserializeTable(filePath);
-    	    	
-    	    	if(tableExists(table.getName()) == null)
-    	        	tables.add(table);
+    	    	Table table = Table.deserializeTable(filePath);	
+	        	tables.add(table);
     	    }    
         }
 
