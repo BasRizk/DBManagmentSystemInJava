@@ -39,7 +39,7 @@ public class DenseIndex {
         return tupleReferences.get(index.indexOf(colValue));
     }
     
-    public void insertTupleRefernces(int colValue) {
+    public void insertTupleRefernces(Object colValue, Tuple tuple) {
 
     }
     
