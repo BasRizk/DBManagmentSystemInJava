@@ -39,7 +39,18 @@ public class DenseIndex {
         return tupleReferences.get(index.indexOf(colValue));
     }
     
+    
+    /**
+     * Insert tuple in the Dense Index
+     * @param colValue is the the tuple's column value that the index is built on
+     * @param tuple is the tuple that to be included in the Dense Index
+     */
     public void insertTupleRefernces(Object colValue, Tuple tuple) {
+        
+        if(!index.contains(colValue))
+            insertionSort(index, colValue);
+        
+        tupleReferences.get(index.indexOf(colValue)).add(tuple);
 
     }
     
