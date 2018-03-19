@@ -54,11 +54,34 @@ public class DenseIndex {
         
         if(tupleRefrencesPerIndex == null)
             tupleRefrencesPerIndex = new ArrayList<>(); 
+        
         tupleRefrencesPerIndex.add(tuple);
 
     }
     
-    private static void insertionSort(ArrayList<Object> array, Object value) {
+    
+    /**
+     * Inserts a value in an array using insertion sort
+     * @param array is the array that the value will be inserted in
+     * @param value is the value to be inserted in array
+     */
+    private static void insertionSort(ArrayList<Object> array, Object value) {          // TODO make it work for all Data Types
+        
+        int valueAfterParsing = Integer.parseInt((String) value);
+        int positionOfInsertion = 0;
+        
+        for(Object indexInArray : array) {
+            if( valueAfterParsing < (Integer.parseInt((String) indexInArray)) ) {
+                positionOfInsertion = array.indexOf(indexInArray);
+                break;
+            }
+        }
+        
+        for(int i = array.size(); i >= positionOfInsertion; i--) {
+            array.set(i, array.get(i-1));
+        }
+        
+        array.set(positionOfInsertion, valueAfterParsing);
         
     }
 
