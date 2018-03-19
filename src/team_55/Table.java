@@ -39,7 +39,7 @@ public class Table implements Serializable{
 		pagePathes = new ArrayList<String>();
 		freePagesPathes = new ArrayList<String>();
 		primaryKeys = new ArrayList<Object>();
-		System.out.println("hi");
+
 		this.tableName = strTableName;
 		this.primaryKeyName = strClusteringKeyColumn;
 		

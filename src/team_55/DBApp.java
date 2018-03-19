@@ -10,18 +10,22 @@ import java.util.Iterator;
 public class DBApp {
 	
 	public ArrayList<Table> tables;
-	private int maximumRowsCountinPage = 3;
+	private int maximumRowsCountinPage = 100;
+	private int mBRINSize = 15;
 	
 	public DBApp() {
 	    
-	    /*DBAppConfig config = new DBAppConfig();
+	    DBAppConfig config;
         try {
-            maximumRowsCountinPage = config.getPropValues();
-        } catch (IOException e) {
+            config = new DBAppConfig();
+            maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
+            mBRINSize = config.getmBRINSize();
+        } catch (IOException e1) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
-	    
+            e1.printStackTrace();
+        }
+        
+        
 		tables = new ArrayList<Table>();
 		
 		
@@ -45,13 +49,15 @@ public class DBApp {
 	
 	public void init() {
 	    
-	    /*DBAppConfig config = new DBAppConfig();
-	    try {
-            maximumRowsCountinPage = config.getPropValues();
-        } catch (IOException e) {
+	    DBAppConfig config;
+        try {
+            config = new DBAppConfig();
+            maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
+            mBRINSize = config.getmBRINSize();
+        } catch (IOException e1) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
+            e1.printStackTrace();
+        }
 
 		File folder = new File("Tables/");
 		File[] listOfFiles = folder.listFiles();
@@ -74,7 +80,7 @@ public class DBApp {
 			throws DBAppException {
 		
 		this.init();
-		
+
 		if(tableExists(strTableName) == null) {      
 			
 			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , maximumRowsCountinPage);
@@ -98,7 +104,7 @@ public class DBApp {
 		else{
 			//Creating index goes here
 			Page page = null;
-			DenseIndex denseLevel = new DenseIndex();
+			DensePage denseLevel = new DensePage();
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
 				for (Tuple tuple : page.getRows()) {

@@ -5,17 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class DBAppConfig {    
+public class DBAppConfig {
     
-    public int getPropValues() throws IOException {
-
-        int maximumRowsCountinPage = 0;
+    int mMaximumRowsCountinPage = 0;
+    int mBRINSize = 0;
+    
+    public DBAppConfig() throws IOException {
 
         InputStream inputStream = null;
 
         try {
             Properties prop = new Properties();
-            String propFileName = "config/DBApp.config";
+            String propFileName = "DBApp.properties";
 
             inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
 
@@ -25,15 +26,24 @@ public class DBAppConfig {
                 throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
             }
 
-            maximumRowsCountinPage = Integer.parseInt(prop.getProperty("MaximumRowsCountinPage"));
+            mMaximumRowsCountinPage = Integer.parseInt(prop.getProperty("MaximumRowsCountinPage"));
+            mBRINSize = Integer.parseInt(prop.getProperty("BRINSize"));
 
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         } finally {
             inputStream.close();
         }
-        return maximumRowsCountinPage;
 
     }
+
+    public int getmMaximumRowsCountinPage() {
+        return mMaximumRowsCountinPage;
+    }
+
+    public int getmBRINSize() {
+        return mBRINSize;
+    }
+    
 
 }

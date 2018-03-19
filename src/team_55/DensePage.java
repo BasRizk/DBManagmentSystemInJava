@@ -2,33 +2,28 @@ package team_55;
 
 import java.util.ArrayList;
 
-public class DenseIndex {
+/**
+ * A class used to resemble a <tt>database dense index page</tt> through the use of
+ * ArrayList of Objects for the index and another ArrayList of ArrayLists of tuples
+ * to resemble the references to tuples.
+ * 
+ * Both ArrayLists have linear correspondence to each other.
+ * 
+ * @author Michael Khalil
+ * @see ArrayList
+ */
+
+public class DensePage {
     
     private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
     private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
                                                                    an array of references to tuples matching that value */    
     
-    public DenseIndex() {   
+    public DensePage() {   
         tupleReferences = new ArrayList<>();
         index = new ArrayList<>();
     }
 
-    public ArrayList<ArrayList<Tuple>> gettupleReferences() {
-        return tupleReferences;
-    }
-
-    public void settupleReferences(ArrayList<ArrayList<Tuple>> tupleReferences) {
-        this.tupleReferences = tupleReferences;
-    }
-
-    public ArrayList<Object> getIndex() {
-        return index;
-    }
-
-    public void setIndex(ArrayList<Object> index) {
-        this.index = index;
-    }
-    
     
     /**
      * Returns an ArrayList of Tuples that are matching a value in the column that the DenseIndex is on
@@ -75,23 +70,24 @@ public class DenseIndex {
 
     }
     
-    
-    /**
-     * Updates the value of the index of a Tuple
-     * @param colValueOld The old index column value
-     * @param colValueNew The new index column value
-     * @param tuple that is updated
-     */
-    public void updateDenseIndex(Object colValueOld, Object colValueNew, Tuple tuple) {
-        tupleReferences.get(index.indexOf(colValueOld)).remove(tuple);
-        
-        if(!index.contains(colValueNew)) {
-            insertionSort(index, colValueNew);
-            insertionSortForArray(tupleReferences, index.indexOf(colValueNew));
-        }
-        
-        tupleReferences.get(index.indexOf(colValueNew)).add(tuple);
-    }
+// Update will better work from outside the class using delete followed by insert, because it might need to be inserted in different page    
+//    /**
+//     * Updates the value of the index of a Tuple
+//     * @param colValueOld The old index column value
+//     * @param colValueNew The new index column value
+//     * @param tuple that is updated
+//     */
+//    public void updateDenseIndex(Object colValueOld, Object colValueNew, Tuple tuple) {
+//        tupleReferences.get(index.indexOf(colValueOld)).remove(tuple);
+//        
+//        if(!index.contains(colValueNew)) {
+//            insertionSort(index, colValueNew);
+//            insertionSortForArray(tupleReferences, index.indexOf(colValueNew));
+//        }
+//        
+//        tupleReferences.get(index.indexOf(colValueNew)).add(tuple);
+//    }
+//    
     
     
     /**
