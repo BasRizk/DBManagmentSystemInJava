@@ -1,4 +1,4 @@
-package teamName;
+package team_55;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 
-import teamName.Tuple;
+import team_55.Tuple;
 
 public class Page implements Serializable {
 
