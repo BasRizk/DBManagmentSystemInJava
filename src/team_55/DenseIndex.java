@@ -54,7 +54,7 @@ public class DenseIndex {
 
     }
     
-    private void insertionSort(ArrayList<Object> array, Object value) {
+    private static void insertionSort(ArrayList<Object> array, Object value) {
         
     }
 
