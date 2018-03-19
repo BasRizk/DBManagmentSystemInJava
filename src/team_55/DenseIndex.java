@@ -35,8 +35,7 @@ public class DenseIndex {
      * @param colValue is the column value of the tuples needed
      * @return Tuples with column value that matches colValue
      */
-    public ArrayList<Tuple> getTuples(int colValue) {
-        
+    public ArrayList<Tuple> getTuples(Object colValue) {
         return tupleReferences.get(index.indexOf(colValue));
     }
     
@@ -44,8 +43,8 @@ public class DenseIndex {
 
     }
     
-    public static void insertionSort(ArrayList<Object> array, Object value) {
-
+    private void insertionSort(ArrayList<Object> array, Object value) {
+        
     }
 
 }
