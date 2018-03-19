@@ -61,6 +61,23 @@ public class DenseIndex {
     
     
     /**
+     * Delete tuple from the Dense Index
+     * @param colValue is the the tuple's column value that the index is built on
+     * @param tuple is the tuple that to be deleted
+     */
+    public void deleteFromDenseIndex(Object colValue, Tuple tuple) {
+        
+        ArrayList<Tuple> tupleRefrencesPerIndex = tupleReferences.get(index.indexOf(colValue));
+        
+        tupleRefrencesPerIndex.remove(tuple);
+        
+        if(tupleRefrencesPerIndex.size() == 0)
+            index.remove(colValue);
+
+    }
+    
+    
+    /**
      * Inserts a value in an array using insertion sort
      * @param array is the array that the value will be inserted in
      * @param value is the value to be inserted in array
@@ -84,5 +101,6 @@ public class DenseIndex {
         array.set(positionOfInsertion, valueAfterParsing);      // TODO Should we insert the value before parsing or after parsing?
         
     }
+    
 
 }
