@@ -81,7 +81,7 @@ public class DenseIndex {
             array.set(i, array.get(i-1));
         }
         
-        array.set(positionOfInsertion, valueAfterParsing);
+        array.set(positionOfInsertion, valueAfterParsing);      // TODO Should we insert the value before parsing or after parsing?
         
     }
 
