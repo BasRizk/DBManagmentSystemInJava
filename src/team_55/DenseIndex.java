@@ -45,12 +45,16 @@ public class DenseIndex {
      * @param colValue is the the tuple's column value that the index is built on
      * @param tuple is the tuple that to be included in the Dense Index
      */
-    public void insertTupleRefernces(Object colValue, Tuple tuple) {
+    public void insertInDenseIndex(Object colValue, Tuple tuple) {
         
         if(!index.contains(colValue))
             insertionSort(index, colValue);
         
-        tupleReferences.get(index.indexOf(colValue)).add(tuple);
+        ArrayList<Tuple> tupleRefrencesPerIndex = tupleReferences.get(index.indexOf(colValue));
+        
+        if(tupleRefrencesPerIndex == null)
+            tupleRefrencesPerIndex = new ArrayList<>(); 
+        tupleRefrencesPerIndex.add(tuple);
 
     }
     
