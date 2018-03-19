@@ -9,8 +9,20 @@ public class Tuple implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -8646050217172196189L;
-	Hashtable<String, Object> colNameValue;
+	private Hashtable<String, Object> colNameValue;
 	
+	public Hashtable<String, Object> getColNameValue() {
+		return colNameValue;
+	}
+
+
+
+	public void setColNameValue(Hashtable<String, Object> colNameValue) {
+		this.colNameValue = colNameValue;
+	}
+
+
+
 	public Tuple(Hashtable<String, Object> htblColNameValue) {
 		
 		this.colNameValue = htblColNameValue;

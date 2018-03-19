@@ -48,7 +48,7 @@ public class Page implements Serializable {
 	    
 		for (Tuple tuple : rows) {
 						
-		    if(htblColNameValue.get(primaryKey).equals(tuple.colNameValue.get(primaryKey))) {
+		    if(htblColNameValue.get(primaryKey).equals(tuple.getColNameValue().get(primaryKey))) {
 		        reqTuple = tuple;
 		        break;
 		    }
@@ -137,7 +137,7 @@ public class Page implements Serializable {
 	private Tuple findTupleString(String strKey , String primaryKeyName) {
 		Tuple reqTuple = null;
 		for (Tuple tuple : rows) {
-			if(tuple.colNameValue.get(primaryKeyName).equals(strKey)) {
+			if(tuple.getColNameValue().get(primaryKeyName).equals(strKey)) {
 				reqTuple = tuple;
 				break;
 			}
@@ -149,7 +149,7 @@ public class Page implements Serializable {
     private Tuple findTupleInt(int intKey, String primaryKeyName) {
         Tuple reqTuple = null;
         for (Tuple tuple : rows) {
-            if (tuple.colNameValue.get(primaryKeyName).equals(intKey)) {
+            if (tuple.getColNameValue().get(primaryKeyName).equals(intKey)) {
                 reqTuple = tuple;
                 break;
             }
@@ -172,15 +172,18 @@ public class Page implements Serializable {
 	    
 		if(tuple != null) {
 			for (String key : htblColNameValue.keySet()) {  //updating each item in the hashtable of the tuple according to the provided hashtable
-				tuple.colNameValue.remove(key);
-				tuple.colNameValue.put(key, htblColNameValue.get(key));
+				tuple.getColNameValue().remove(key);
+				tuple.getColNameValue().put(key, htblColNameValue.get(key));
 			}
 			
-			tuple.colNameValue.remove("TouchDate");
-			tuple.colNameValue.put("TouchDate", new Date());	
+			tuple.getColNameValue().remove("TouchDate");
+			tuple.getColNameValue().put("TouchDate", new Date());	
 		}
 	
 					
+	}
+	public ArrayList<Tuple> getRows() {
+		return rows;
 	}
 
 
