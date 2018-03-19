@@ -47,13 +47,12 @@ public class DenseIndex {
      */
     public void insertInDenseIndex(Object colValue, Tuple tuple) {
         
-        if(!index.contains(colValue))
+        if(!index.contains(colValue)) {
             insertionSort(index, colValue);
+            insertionSortForArray(tupleReferences, index.indexOf(colValue));
+        }
         
         ArrayList<Tuple> tupleRefrencesPerIndex = tupleReferences.get(index.indexOf(colValue));
-        
-        if(tupleRefrencesPerIndex == null)
-            tupleRefrencesPerIndex = new ArrayList<>(); 
         
         tupleRefrencesPerIndex.add(tuple);
 
@@ -78,8 +77,26 @@ public class DenseIndex {
     
     
     /**
-     * Inserts a value in an array using insertion sort
-     * @param array is the array that the value will be inserted in
+     * Updates the value of the index of a Tuple
+     * @param colValueOld The old index column value
+     * @param colValueNew The new index column value
+     * @param tuple that is updated
+     */
+    public void updateDenseIndex(Object colValueOld, Object colValueNew, Tuple tuple) {
+        tupleReferences.get(index.indexOf(colValueOld)).remove(tuple);
+        
+        if(!index.contains(colValueNew)) {
+            insertionSort(index, colValueNew);
+            insertionSortForArray(tupleReferences, index.indexOf(colValueNew));
+        }
+        
+        tupleReferences.get(index.indexOf(colValueNew)).add(tuple);
+    }
+    
+    
+    /**
+     * Inserts a value in an array list using insertion sort
+     * @param array is the array list that the value will be inserted in
      * @param value is the value to be inserted in array
      */
     private static void insertionSort(ArrayList<Object> array, Object value) {          // TODO make it work for all Data Types
@@ -100,6 +117,21 @@ public class DenseIndex {
         
         array.set(positionOfInsertion, valueAfterParsing);      // TODO Should we insert the value before parsing or after parsing?
         
+    }
+    
+    
+    /**
+     * Inserts a new ArrayList in tupleRefrence array list according to the corresponding Index
+     * @param array is the array list that the new array list will be inserted in
+     * @param positionOfInsertion is the index that the new array list will be inserted in
+     */
+    private static void insertionSortForArray(ArrayList<ArrayList<Tuple>> array, int positionOfInsertion) {
+        
+        for(int i = array.size(); i >= positionOfInsertion; i--) {
+            array.set(i, array.get(i-1));
+        }
+        
+        array.set(positionOfInsertion, new ArrayList<>());
     }
     
 
