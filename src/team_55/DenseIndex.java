@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class DenseIndex {
     
     private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
-    private ArrayList<ArrayList<Tuple>> tupleReferences;         /* sorted according to index Array such that each value in index array corresponds to
+    private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
                                                                    an array of references to tuples matching that value */    
     
     public DenseIndex() {   
