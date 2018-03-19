@@ -2,13 +2,13 @@ package team_55;
 
 import java.util.ArrayList;
 
-public class DenseIndex {
+public class DensePage {
     
     private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
     private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
                                                                    an array of references to tuples matching that value */    
     
-    public DenseIndex() {   
+    public DensePage() {   
         tupleReferences = new ArrayList<>();
         index = new ArrayList<>();
     }
@@ -100,12 +100,11 @@ public class DenseIndex {
      * @param value is the value to be inserted in array
      */
     private static void insertionSort(ArrayList<Object> array, Object value) {          // TODO make it work for all Data Types
-        
-        int valueAfterParsing = Integer.parseInt((String) value);
+        String stringValue = (String) value;
         int positionOfInsertion = 0;
         
         for(Object indexInArray : array) {
-            if( valueAfterParsing < (Integer.parseInt((String) indexInArray)) ) {
+            if( stringValue.compareTo((String) indexInArray) < 0 ) {
                 positionOfInsertion = array.indexOf(indexInArray);
                 break;
             }
@@ -115,7 +114,7 @@ public class DenseIndex {
             array.set(i, array.get(i-1));
         }
         
-        array.set(positionOfInsertion, valueAfterParsing);      // TODO Should we insert the value before parsing or after parsing?
+        array.set(positionOfInsertion, stringValue);      // TODO Should we insert the value before parsing or after parsing?
         
     }
     
