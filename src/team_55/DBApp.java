@@ -92,6 +92,22 @@ public class DBApp {
 			throws DBAppException {
 		
 		//TODO 2 createBRINindex
+		Table targetTable = tableExists(strTableName);
+		if(targetTable == null)
+			throw new DBAppException("table does not exist!");
+		else{
+			//Creating index goes here
+			Page page = null;
+			DenseIndex denseLevel = new DenseIndex();
+			for (String path : targetTable.getPagePathes()) {
+				page = Page.deserializePage(path);
+				for (Tuple tuple : page.getRows()) {
+					Object value = tuple.getColNameValue().get(strColName);
+					denseLevel.insertInDenseIndex(value, tuple);
+				}
+				page.serializePage(path);
+			}
+		}
 	
 	}
 
