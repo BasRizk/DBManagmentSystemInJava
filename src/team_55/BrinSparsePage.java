@@ -24,7 +24,7 @@ public class BrinSparsePage implements Serializable {
 	private ArrayList<Object> maxIndexCol;
 	private ArrayList<String> refCol;
 	
-	public BrinSparsePage(String typeOfRef) {
+	public BrinSparsePage() {
 		this.minIndexCol = new ArrayList<Object>();
 		this.maxIndexCol = new ArrayList<Object>();
 		
@@ -74,6 +74,10 @@ public class BrinSparsePage implements Serializable {
 
 	public ArrayList<Object> getMaxIndexCol() {
 		return maxIndexCol;
+	}
+	
+	public ArrayList<String> getRefCol() {
+		return refCol;
 	}
 	
 	public Object getMin(int index) {
