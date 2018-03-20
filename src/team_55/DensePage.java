@@ -165,7 +165,7 @@ public class DensePage implements Serializable{
      */
     private static void insertionSort(ArrayList<Object> array, Object value, String colType) {
         
-        if(colType == "java.util.String") {
+        if(colType.equals("java.lang.String")) {
             String stringValue = (String) value;
             int positionOfInsertion = 0;
         
@@ -182,7 +182,7 @@ public class DensePage implements Serializable{
         
             array.set(positionOfInsertion, stringValue);
         
-        } else if (colType == "java.util.Integer") {
+        } else if (colType.equals("java.lang.Integer")) {
             int intValue = (int) value;
             int positionOfInsertion = 0;
         
@@ -199,7 +199,7 @@ public class DensePage implements Serializable{
         
             array.set(positionOfInsertion, intValue);
         
-        } else if (colType == "java.util.Double") {
+        } else if (colType.equals("java.lang.Double")) {
             Double doubleValue = (Double) value;
             int positionOfInsertion = 0;
         
