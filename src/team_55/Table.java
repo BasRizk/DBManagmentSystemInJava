@@ -279,7 +279,6 @@ public class Table implements Serializable{
 		Table table = null;
 		
 		try {
-	        
             FileInputStream fis = new FileInputStream(tablePath);
             ObjectInputStream ois = new ObjectInputStream(fis);
             Object object  = ois.readObject();
