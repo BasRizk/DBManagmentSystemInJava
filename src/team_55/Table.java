@@ -397,6 +397,12 @@ public class Table implements Serializable{
 	public boolean isColumnIndexed(String colName) {
 	    return this.ColName_Indexed.get(colName);
 	}
+
+
+	public Hashtable<String, String> getColName_Type() {
+		return ColName_Type;
+	}
+	
 	
 	public void printTableData() {
 		
