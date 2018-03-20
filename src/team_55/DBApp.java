@@ -96,16 +96,15 @@ public class DBApp {
 			throws DBAppException {
 		
 		//TODO 2 createBRINindex
-		Table targetTable = tableExists(strTableName);		    
+		Table targetTable = tableExists(strTableName);
+		targetTable.setColumnIndexed(strColName);
+        String colType = targetTable.getColumnType(strColName);
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
 			// Creating index goes here
 			Page page = null;
 
-			targetTable.setColumnIndexed(strColName);
-            String colType = targetTable.getColumnType(strColName);
-			
 			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
@@ -150,7 +149,6 @@ public class DBApp {
 	
 	
 	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
-		String stringValue = (String) value;
 		//boolean inserted = false;
 		if(densePages.size() == 0){
 			DensePage firstPage = new DensePage(colType);
@@ -161,7 +159,7 @@ public class DBApp {
 		int i = 0;
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
-			if((compareWithAllTypes(value, densePage.getIndex().get(0),">=", colType)& compareWithAllTypes(value, densePage.getIndex().get(densePage.getIndex().size()),"<=", colType)) || compareWithAllTypes(value, densePage.getIndex().get(0),"<", colType)) {
+			if((compareWithAllTypes(value, densePage.getIndex().get(0),">=", colType) && compareWithAllTypes(value, densePage.getIndex().get(densePage.getIndex().size()),"<=", colType)) || compareWithAllTypes(value, densePage.getIndex().get(0),"<", colType)) {
 				if(densePage.getSize() < maximumRowsCountinPage) {
 					densePage.insertInDenseIndex(value, tuple);
 					//inserted = true;
