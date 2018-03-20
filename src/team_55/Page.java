@@ -85,6 +85,30 @@ public class Page implements Serializable {
         }
         return reqTuple;
     }
+    
+    private Tuple findTupleDouble(Double doubleKey, String primaryKeyName) {
+        Tuple reqTuple = null;
+        for (Tuple tuple : rows) {
+            if (tuple.getColNameValue().get(primaryKeyName).equals(doubleKey)) {
+                reqTuple = tuple;
+                break;
+            }
+
+        }
+        return reqTuple;
+    }
+    
+    private Tuple findTupleDate(Date dateKey, String primaryKeyName) {
+        Tuple reqTuple = null;
+        for (Tuple tuple : rows) {
+            if (tuple.getColNameValue().get(primaryKeyName).equals(dateKey)) {
+                reqTuple = tuple;
+                break;
+            }
+
+        }
+        return reqTuple;
+    }
 	
 	public void updateRow(String strKey, String primaryKeyName ,Hashtable<String, Object> htblColNameValue, String primaryKeyType) {
 		// TODO handle the cases that primary key is date or double
@@ -94,6 +118,12 @@ public class Page implements Serializable {
 	    if(primaryKeyType.equals("java.lang.Integer")) {
 	        int intKey = Integer.parseInt(strKey);
 	        tuple = findTupleInt(intKey, primaryKeyName);
+	    } else if(primaryKeyType.equals("java.lang.Double")) {
+	        Double doubleKey = Double.parseDouble(strKey);
+            tuple = findTupleDouble(doubleKey, primaryKeyName);
+	    } else if(primaryKeyType.equals("java.lang.Date")) {
+	        Date dateKey = (Date) ((Object) strKey);
+            tuple = findTupleDate(dateKey, primaryKeyName);
 	    } else {
 	        tuple = findTupleString(strKey, primaryKeyName);
 	    }
