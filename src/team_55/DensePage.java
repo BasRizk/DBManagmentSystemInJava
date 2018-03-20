@@ -127,8 +127,10 @@ public class DensePage implements Serializable{
         
         tupleRefrencesPerIndex.remove(tuple);
         
-        if(tupleRefrencesPerIndex.size() == 0)
+        if(tupleRefrencesPerIndex.size() == 0) {
             index.remove(colValue);
+            tupleReferences.remove(tupleRefrencesPerIndex);
+        }
 
     }
     public int getSize(){ //give the total number of references in the page
