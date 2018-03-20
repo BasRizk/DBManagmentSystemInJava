@@ -331,6 +331,10 @@ public class Table implements Serializable{
 		
 	}
 	
+	public String getColumnType(String colName) {
+	    return ColName_Type.get(colName);
+	}
+	
 	
 	
 	

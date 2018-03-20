@@ -104,7 +104,8 @@ public class DBApp {
 		else{
 			//Creating index goes here
 			Page page = null;
-			DensePage denseLevel = new DensePage();                  // Constructor now takes an input of type boolean
+			boolean isDate = (tableExists(strTableName).getColumnType(strColName)) == "java.util.Date"? true : false;
+			DensePage denseLevel = new DensePage(isDate);
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
 				for (Tuple tuple : page.getRows()) {
