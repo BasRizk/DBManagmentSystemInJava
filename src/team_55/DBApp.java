@@ -8,10 +8,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 public class DBApp {
-
-	private ArrayList<Table> tables;
-	private ArrayList<BrinSparsePage> currentSparsePages;
-	private int maximumRowsCountinPage = 100;
+	
+	public ArrayList<Table> tables;
+	private static int maximumRowsCountinPage = 100;
 	private int mBRINSize = 15;
 
 	public DBApp() {
@@ -89,31 +88,53 @@ public class DBApp {
 
 	}
 
-	public void createBRINIndex(String strTableName, String strColName) throws DBAppException {
-
-		// TODO 2 createBRINindex
+	public void createBRINIndex(String strTableName, String strColName)
+			throws DBAppException {
+		
+		//TODO 2 createBRINindex
 		Table targetTable = tableExists(strTableName);
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
 			// Creating index goes here
 			Page page = null;
-			boolean isDate = (tableExists(strTableName).getColumnType(strColName)) == "java.util.Date" ? true : false;
-			DensePage denseLevel = new DensePage(isDate);
+
+			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
 				for (Tuple tuple : page.getRows()) {
+					//TODO adding exception if user entered wrong column name
 					Object value = tuple.getColNameValue().get(strColName);
-					denseLevel.insertInDenseIndex(value, tuple);
+					insertIntoDensePage(densePages,value,tuple);
 				}
 				page.serializePage(path);
 			}
 		}
-
 	}
-
-	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
-
+	
+	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple){
+		String stringValue = (String) value;
+		for (DensePage densePage : densePages) {
+			ArrayList<Object> index = densePage.getIndex();
+			if(stringValue.compareTo((String)index.get(0)) > 0 && stringValue.compareTo((String)index.get(index.size())) <= 0){
+				if(densePage.getSize() < maximumRowsCountinPage)
+					densePage.insertInDenseIndex(value, tuple);
+				else{
+					Object val = index.get(index.size());
+					densePage.getIndex().remove(index.size());
+					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size());
+					densePage.deleteFromDenseIndex(val, tuple2);
+					densePage.insertInDenseIndex(value, tuple);
+					insertIntoDensePage(densePages,val,tuple2);
+				}
+				break;
+			}
+		}
+	}
+	
+	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 
+			throws DBAppException {
+		
 		this.init();
 
 		Table table = tableExists(strTableName);
