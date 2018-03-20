@@ -14,7 +14,7 @@ public class DBApp {
 	
 	public ArrayList<Table> tables;
 	private static int maximumRowsCountinPage = 100;
-	private int mBRINSize = 15;
+	private static int mBRINSize = 15;
 	private final static String META_DATA_DIR = "data\\metadata.csv";
 
 	public DBApp() {
@@ -125,7 +125,7 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages){
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
 		for (BrinSparsePage sparsePage : sparsePages) {
-			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == maximumRowsCountinPage)
+			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == mBRINSize)
 				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage"));
 			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size());
 			lastPage.getMinIndexCol().add(sparsePage.getMin(0));
@@ -137,7 +137,7 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages){
 		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
 		for (DensePage densePage : densePages) {
-			if(sparsePages.get(sparsePages.size()).getSize() == maximumRowsCountinPage)
+			if(sparsePages.get(sparsePages.size()).getSize() == mBRINSize)
 				sparsePages.add(new BrinSparsePage("DensePage"));
 			BrinSparsePage lastPage = sparsePages.get(sparsePages.size());
 			lastPage.getMinIndexCol().add(densePage.getIndex().get(0));
@@ -160,7 +160,7 @@ public class DBApp {
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
 			if((compareWithAllTypes(value, densePage.getIndex().get(0),">=", colType) && compareWithAllTypes(value, densePage.getIndex().get(densePage.getIndex().size()),"<=", colType)) || compareWithAllTypes(value, densePage.getIndex().get(0),"<", colType)) {
-				if(densePage.getSize() < maximumRowsCountinPage) {
+				if(densePage.getSize() < mBRINSize) {
 					densePage.insertInDenseIndex(value, tuple);
 					//inserted = true;
 				}
