@@ -18,9 +18,6 @@ import java.util.Hashtable;
 
 public class Table implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private String tableName;
@@ -113,10 +110,6 @@ public class Table implements Serializable{
 			String colType = ColName_Type.get(colName);
 			boolean isKey = colName == primaryKeyName;
 			
-			//It has to be not indexed at first !
-			//boolean isIndexed = isIndexed(colName);
-			
-			
 			data = data +  this.tableName + ", " + colName + ", " + colType + ", " +
 						isKey + ", " + false + "\n";
 		}
@@ -130,7 +123,7 @@ public class Table implements Serializable{
 		
 		} catch (IOException e) {
 			
-			System.out.println(e);
+			e.printStackTrace();
 			
 		}
 		
@@ -141,8 +134,42 @@ public class Table implements Serializable{
 	 * @param strColumnName, column name of the table to be changed.
 	 * @param indexed, new Value of index column for the correspondance index.
 	 */
-	private void updateMetaWithIndexedColumn(String strColumnName, boolean indexed) {
-		//TODO Update the Meta-data File for the new indexing column
+	public void updateMetaWithIndexedColumn(String strColumnName, boolean indexed) {
+		
+		String filePath = META_DATA_DIR;
+				
+		try {
+			FileReader metaReader = new FileReader(new File(META_DATA_DIR));
+			BufferedReader metaBuffer = new BufferedReader(metaReader);
+			String allLines = "";
+		
+			String line = null;
+			while((line = metaBuffer.readLine()) != null) {
+				String[] lineSplit = line.split(",");
+				String currentTable = lineSplit[0].replaceAll(" ", "");
+				String currentColumn = lineSplit[1].replaceAll(" ", "");
+				if(currentTable.equals(this.tableName)
+						&& currentColumn.equals(strColumnName)) {
+					
+					line = lineSplit[0] + ", " + lineSplit[1] + ", " + lineSplit[2] + ", " +
+							lineSplit[3] + ", " + indexed;
+				}
+				allLines = allLines + line + "\n";
+				
+			}
+			metaBuffer.close();
+					
+			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true));
+			
+			bw.write(allLines);
+			bw.close();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void createPage() {
@@ -243,10 +270,8 @@ public class Table implements Serializable{
             fos.close();
 	        
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -267,28 +292,12 @@ public class Table implements Serializable{
             fis.close();
             
         } catch (Exception e) {
-            //TODO Auto-generated catch block
             e.printStackTrace();
         }
 		
 		return table;
 	}
-	
-	public void printTableData() {
-		
-		System.out.println(tableName + " : " + numOfRows + " total num of rows: " + "\n");
-	
-		for(String key : ColName_Type.keySet()) {
-			System.out.print(ColName_Type.get(key).toString() + " : ");
-		}
-		
-		for(String path : pagePathes) {
-			System.out.println("\n");
-			Page page = Page.deserializePage(path);
-			page.printPage();
-		}
-		
-	}
+
 	
 	private Object primaryKeyExists(Object newKey) {
 		Object reqKey = null;
@@ -325,30 +334,6 @@ public class Table implements Serializable{
 		}
 		return false;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	public String getName() {
-		return tableName;
-	}
-
-	public ArrayList<String> getPagePathes() {
-		return pagePathes;
-	}
-	
-	public String getLastPagePath() {
-		return lastPagePath;
-	}
-
-	public int getNumOfRows() {
-		return numOfRows;
-	}
-
-	public int getNumOfCol() {
-		return numOfCol;
-	}
-
 
 	public void updateFromPage(String strKey, Hashtable<String, Object> htblColNameValue) throws DBAppException {
 		
@@ -380,6 +365,26 @@ public class Table implements Serializable{
 		
 	}
 	
+	public String getName() {
+		return tableName;
+	}
+
+	public ArrayList<String> getPagePathes() {
+		return pagePathes;
+	}
+	
+	public String getLastPagePath() {
+		return lastPagePath;
+	}
+
+	public int getNumOfRows() {
+		return numOfRows;
+	}
+
+	public int getNumOfCol() {
+		return numOfCol;
+	}
+
 	public String getColumnType(String colName) {
 	    return ColName_Type.get(colName);
 	}
@@ -399,5 +404,20 @@ public class Table implements Serializable{
 	}
 	
 	
+	public void printTableData() {
+		
+		System.out.println(tableName + " : " + numOfRows + " total num of rows: " + "\n");
+	
+		for(String key : ColName_Type.keySet()) {
+			System.out.print(ColName_Type.get(key).toString() + " : ");
+		}
+		
+		for(String path : pagePathes) {
+			System.out.println("\n");
+			Page page = Page.deserializePage(path);
+			page.printPage();
+		}
+		
+	}
 	
 }

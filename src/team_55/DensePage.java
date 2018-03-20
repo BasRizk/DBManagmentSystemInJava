@@ -42,10 +42,7 @@ public class DensePage implements Serializable{
     }
     
 	public void serializeDensePage(String tablePath) {
-		
-		//File tableDir = new File("../tableName/");
-		//tablePath.mkdirs();
-		
+
 		try {
 			
             FileOutputStream fos = new FileOutputStream(tablePath);
@@ -56,10 +53,8 @@ public class DensePage implements Serializable{
             fos.close();
 	        
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -79,7 +74,6 @@ public class DensePage implements Serializable{
             fis.close();
             
         } catch (Exception e) {
-            //TODO Auto-generated catch block
             e.printStackTrace();
         }
 		

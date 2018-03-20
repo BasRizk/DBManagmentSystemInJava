@@ -3,29 +3,56 @@ package team_55;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+/**
+ * A Basic Database Engine that supports Brin Indexing,
+ * Developed during the course work of DATABASES II 
+ * CSEN 603 in the German University in Cairo
+ * 
+ * Main Class : DBApp
+ * 
+ * @authors Basem Rizk, Michael Khalil, Steven Nassef, and Ibram Abdel Malek
+ *
+ * 
+ *
+ */
+
 public class DBApp {
 	
 	public ArrayList<Table> tables;
 	private static int maximumRowsCountinPage = 100;
-	private int mBRINSize = 15;
+	private static int mBRINSize = 15;
 	private final static String META_DATA_DIR = "data\\metadata.csv";
+	private final static String TABLES_DIR = "Tables/";
+	private final static String OUTER_SPARSE_DIR = "IndexPages/OuterSparsePages/";
+	private final static String INNER_SPARSE_DIR = "IndexPages/InnerSparsePages/";
+	private final static String DENSE_DIR = "IndexPages/DensePages/";
+	
+	/*
+	 * Indexes are saved such in the following format:
+	 * 
+	 * TABLES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR
+	 * 
+	 * 
+	 */
 
 	public DBApp() {
 
+		//TODO Make sure that every needed Directory is Created
 		DBAppConfig config;
 		try {
 			config = new DBAppConfig();
 			maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
 			mBRINSize = config.getmBRINSize();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -33,7 +60,7 @@ public class DBApp {
 
 		// Creating the global meta-data file
 
-		String metadataPath = "data\\metadata.csv";
+		String metadataPath = META_DATA_DIR;
 		File metadataFile = new File(metadataPath);
 
 		if (!metadataFile.exists()) {
@@ -55,11 +82,10 @@ public class DBApp {
 			maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
 			mBRINSize = config.getmBRINSize();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
-		File folder = new File("Tables/");
+		File folder = new File(TABLES_DIR);
 		File[] listOfFiles = folder.listFiles();
 		tables.clear(); // clearing the array to avoid having duplicates
 
@@ -110,7 +136,8 @@ public class DBApp {
 			throws DBAppException {
 		
 		//TODO 2 createBRINindex
-		Table targetTable = tableExists(strTableName);		    
+		Table targetTable = tableExists(strTableName);
+		
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
@@ -118,7 +145,7 @@ public class DBApp {
 			Page page = null;
 
 			targetTable.setColumnIndexed(strColName);
-            String colType = targetTable.getColumnType(strColName);
+	        String colType = targetTable.getColumnType(strColName);
 			
 			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
 			for (String path : targetTable.getPagePathes()) {
@@ -133,18 +160,44 @@ public class DBApp {
 			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages);
 			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel);
 			
+			File tableDir;
+			String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + OUTER_SPARSE_DIR;
+			tableDir = new File(outerSparsePagesDir);
+			tableDir.mkdirs();
+			String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + INNER_SPARSE_DIR;
+			tableDir = new File(innerSparsePagesDir);
+			tableDir.mkdirs();
+			String densePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + DENSE_DIR;
+			tableDir = new File(densePagesDir);
+			tableDir.mkdirs();
+
+			serializeAllSparsePages(sparsePagesSecondLevel, outerSparsePagesDir);
+			serializeAllSparsePages(sparsePagesFirstLevel, innerSparsePagesDir);
+			serializeAllDensePages(densePages, densePagesDir);
+			
 		}
 	}
 	
+	private void serializeAllSparsePages(ArrayList<BrinSparsePage> sparsePages, String sparsePagesDir) {
+		for(int i=0; i<= sparsePages.size(); i++) {
+			sparsePages.get(i).serializeBrinSparsePage(sparsePagesDir + "sparsePage_" + i + ".ser");
+		}
+	}
 	
+	private void serializeAllDensePages(ArrayList<DensePage> densePages, String densePagesDir) {
+		for(int i=0; i<= densePages.size(); i++) {
+			densePages.get(i).serializeDensePage(densePagesDir + "densePage_" + i + ".ser");
+		}
+	}
+
 	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages){
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
 		for (BrinSparsePage sparsePage : sparsePages) {
-			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == maximumRowsCountinPage)
+			if(secondLevelSparsePages.get(secondLevelSparsePages.size() - 1).getSize() == mBRINSize)
 				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage"));
-			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size());
+			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size() - 1);
 			lastPage.getMinIndexCol().add(sparsePage.getMin(0));
-			lastPage.getMaxIndexCol().add(sparsePage.getMax(sparsePage.getSize()));
+			lastPage.getMaxIndexCol().add(sparsePage.getMax(sparsePage.getSize() - 1));
 		}
 		return secondLevelSparsePages;
 	}
@@ -152,19 +205,16 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages){
 		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
 		for (DensePage densePage : densePages) {
-			if(sparsePages.get(sparsePages.size()).getSize() == maximumRowsCountinPage)
+			if(sparsePages.get(sparsePages.size() - 1).getSize() == mBRINSize)
 				sparsePages.add(new BrinSparsePage("DensePage"));
-			BrinSparsePage lastPage = sparsePages.get(sparsePages.size());
+			BrinSparsePage lastPage = sparsePages.get(sparsePages.size() - 1);
 			lastPage.getMinIndexCol().add(densePage.getIndex().get(0));
-			lastPage.getMaxIndexCol().add(densePage.getIndex().get(densePage.getIndex().size()));
+			lastPage.getMaxIndexCol().add(densePage.getIndex().get(densePage.getIndex().size() - 1));
 		}
 		return sparsePages;
 	}
-	
-	
-	
+
 	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
-		String stringValue = (String) value;
 		//boolean inserted = false;
 		if(densePages.size() == 0){
 			DensePage firstPage = new DensePage(colType);
@@ -175,19 +225,19 @@ public class DBApp {
 		int i = 0;
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
-			if((stringValue.compareTo((String)index.get(0)) >= 0 && stringValue.compareTo((String)index.get(index.size())) <= 0) || stringValue.compareTo((String)index.get(0)) < 0) {
-				if(densePage.getSize() < maximumRowsCountinPage) {
+			if((compareWithAllTypes(value, densePage.getIndex().get(0),">=", colType) && compareWithAllTypes(value, densePage.getIndex().get(densePage.getIndex().size() - 1),"<=", colType)) || compareWithAllTypes(value, densePage.getIndex().get(0),"<", colType)) {
+				if(densePage.getSize() < mBRINSize) {
 					densePage.insertInDenseIndex(value, tuple);
 					//inserted = true;
 				}
 				else{
-					Object val = index.get(index.size());
-					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size());
+					Object val = index.get(index.size() - 1);
+					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size() - 1);
 					densePage.deleteFromDenseIndex(val, tuple2);
 					densePage.insertInDenseIndex(value, tuple);
 					if(i == densePages.size() - 1){
 						densePages.add(new DensePage(colType));
-						densePages.get(densePages.size()).insertInDenseIndex(val, tuple2);
+						densePages.get(densePages.size() - 1).insertInDenseIndex(val, tuple2);
 					}
 					//inserted = true;
 					else
@@ -256,7 +306,6 @@ public class DBApp {
 	public Iterator<Tuple> selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 
-		// TODO 7 selectFromTable
 		if(tableExists(strTableName) != null) {
 
 			if (brinIndexed(strTableName, strColumnName)) {
@@ -276,7 +325,6 @@ public class DBApp {
 	
 	private Iterator<Tuple> selectUsingExtensiveSearching(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) {
-		// TODO Normal Selection from table
 		
 		//TODO Do something to check if columnName actually exists in the table
 		
@@ -333,7 +381,7 @@ public class DBApp {
 		String[] listOfPathes;
 		
 		if(selectedBackPages == null) {
-			File folder = new File("/" + strTableName + "/" + strColumnName + "/OuterSparsePages/");
+			File folder = new File(TABLES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR);
 			File[] listOfFiles = folder.listFiles();
 			listOfPathes = getPathes(listOfFiles);
 		} else {
@@ -399,7 +447,6 @@ public class DBApp {
 					String filePath = listOfPathes[pathIndex];
 
 					DensePage densePage = DensePage.deserializeDensePage(filePath);
-					int pageSize = densePage.getSize();
 
 					for (Object denseValue : densePage.getIndexColumn()) {
 
@@ -460,7 +507,7 @@ public class DBApp {
 		return pathes;
 	}
 
-	private static boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
+	private boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
 		
 		switch (type) {
 		
@@ -541,7 +588,7 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
+	private static boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
 		
 		switch (type) {
 		
@@ -571,7 +618,7 @@ public class DBApp {
 		}
 	}
 
-	private boolean compareWith(Double value, Double compareValue, String operator) {
+	private static boolean compareWith(Double value, Double compareValue, String operator) {
 	
 		switch(operator) {
 		
@@ -584,7 +631,7 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWith(String value, String compareValue, String operator) {
+	private static boolean compareWith(String value, String compareValue, String operator) {
 		
 		switch(operator) {
 		
@@ -597,12 +644,12 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
+	private static boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
 		//No support for boolean Indexing
 				return false;
 	}
 	
-	private boolean compareWith(Date value, Date compareValue, String operator) {
+	private static boolean compareWith(Date value, Date compareValue, String operator) {
 		
 		switch(operator) {
 		
@@ -637,10 +684,11 @@ public class DBApp {
 				if(currentTable.equals(strTableName)
 						&& currentColumn.equals(strColumnName)) {
 					String indexed = lineSplit[4].replaceAll(" ", "");
+					metaBuffer.close();
 					return (indexed.equals("true"));
 				}
 			}
-			
+			metaBuffer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -650,8 +698,7 @@ public class DBApp {
 	}
 
 	private Table tableExists(String tableName) {
-		// this.init(); //it makes stackoverflow , because in init method i call it so
-		// it.
+
 		Table reqTable = null;
 		for (Table table : tables) {
 
