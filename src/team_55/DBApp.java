@@ -91,6 +91,7 @@ public class DBApp {
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
+        String colType = (tableExists(strTableName).getColumnType(strColName));
 		//TODO 2 createBRINindex
 		Table targetTable = tableExists(strTableName);
 		if (targetTable == null)
@@ -105,31 +106,42 @@ public class DBApp {
 				for (Tuple tuple : page.getRows()) {
 					//TODO adding exception if user entered wrong column name
 					Object value = tuple.getColNameValue().get(strColName);
-					insertIntoDensePage(densePages,value,tuple);
+					insertIntoDensePage(densePages,value,tuple, colType);
 				}
 				page.serializePage(path);
 			}
 		}
 	}
 	
-	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple){
+	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
 		String stringValue = (String) value;
+		boolean inserted = false;
+		
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
 			if(stringValue.compareTo((String)index.get(0)) > 0 && stringValue.compareTo((String)index.get(index.size())) <= 0){
-				if(densePage.getSize() < maximumRowsCountinPage)
+				if(densePage.getSize() < maximumRowsCountinPage) {
 					densePage.insertInDenseIndex(value, tuple);
+					inserted = true;
+				}
 				else{
 					Object val = index.get(index.size());
 					densePage.getIndex().remove(index.size());
 					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size());
 					densePage.deleteFromDenseIndex(val, tuple2);
 					densePage.insertInDenseIndex(value, tuple);
-					insertIntoDensePage(densePages,val,tuple2);
+					inserted = true;
+					insertIntoDensePage(densePages,val,tuple2, colType);
 				}
 				break;
 			}
 		}
+		
+		if(!inserted) {
+		    densePages.add(new DensePage(colType));
+            insertIntoDensePage(densePages, value, tuple, colType);
+		}
+		
 	}
 	
 	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 

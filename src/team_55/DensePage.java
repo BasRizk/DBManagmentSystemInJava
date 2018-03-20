@@ -29,16 +29,16 @@ public class DensePage implements Serializable{
 	private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
     private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
                                                                    an array of references to tuples matching that value */
-    private boolean mIsDate = false;                            // true if the dense index is on a column of type date
+    private String mColType = "";                               // type of the column that the index is built on
     
     /**
      * A Dense page
      * @param isDate true if the dense index is on a column of type date
      */
-    public DensePage(boolean isDate) {   
+    public DensePage(String colType) {   
         tupleReferences = new ArrayList<>();
         index = new ArrayList<>();
-        mIsDate = isDate;
+        mColType = colType;
     }
     
 	public void serializeDensePage(String tablePath) {
@@ -105,7 +105,7 @@ public class DensePage implements Serializable{
     public void insertInDenseIndex(Object colValue, Tuple tuple) {
         
         if(!index.contains(colValue)) {
-            insertionSort(index, colValue, mIsDate);
+            insertionSort(index, colValue, mColType);
             insertionSortForArray(tupleReferences, index.indexOf(colValue));
         }
         
@@ -165,10 +165,11 @@ public class DensePage implements Serializable{
      * Inserts a value in an array list using insertion sort
      * @param array is the array list that the value will be inserted in
      * @param value is the value to be inserted in array
+     * @param colType type of the column that the index is built on
      */
-    private static void insertionSort(ArrayList<Object> array, Object value, boolean isDate) {
+    private static void insertionSort(ArrayList<Object> array, Object value, String colType) {
         
-        if(!isDate) {
+        if(colType == "java.util.String") {
             String stringValue = (String) value;
             int positionOfInsertion = 0;
         
