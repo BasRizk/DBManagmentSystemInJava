@@ -109,14 +109,16 @@ public class DBApp {
 		
 		//TODO 2 createBRINindex
 		Table targetTable = tableExists(strTableName);
-		targetTable.setColumnIndexed(strColName);
-        String colType = targetTable.getColumnType(strColName);
+		
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
 			// Creating index goes here
 			Page page = null;
 
+			targetTable.setColumnIndexed(strColName);
+	        String colType = targetTable.getColumnType(strColName);
+			
 			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
