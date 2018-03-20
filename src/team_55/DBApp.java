@@ -8,103 +8,97 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 public class DBApp {
-	
-	public ArrayList<Table> tables;
+
+	private ArrayList<Table> tables;
+	private ArrayList<BrinSparsePage> currentSparsePages;
 	private int maximumRowsCountinPage = 100;
 	private int mBRINSize = 15;
-	
+
 	public DBApp() {
-	    
-	    DBAppConfig config;
-        try {
-            config = new DBAppConfig();
-            maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
-            mBRINSize = config.getmBRINSize();
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        
-        
+
+		DBAppConfig config;
+		try {
+			config = new DBAppConfig();
+			maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
+			mBRINSize = config.getmBRINSize();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		tables = new ArrayList<Table>();
-		
-		
-		//Creating the global meta-data file
+
+		// Creating the global meta-data file
 
 		String metadataPath = "data\\metadata.csv";
 		File metadataFile = new File(metadataPath);
-		
-		
-		if(!metadataFile.exists()) {
+
+		if (!metadataFile.exists()) {
 			try {
-				metadataFile.getParentFile().mkdirs(); 
+				metadataFile.getParentFile().mkdirs();
 				metadataFile.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
 
 	}
-	
+
 	public void init() {
-	    
-	    DBAppConfig config;
-        try {
-            config = new DBAppConfig();
-            maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
-            mBRINSize = config.getmBRINSize();
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+
+		DBAppConfig config;
+		try {
+			config = new DBAppConfig();
+			maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
+			mBRINSize = config.getmBRINSize();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		File folder = new File("Tables/");
 		File[] listOfFiles = folder.listFiles();
-		tables.clear();  //clearing the array to avoid having duplicates
-		
-        if(listOfFiles != null) {
-    	    for(File file : listOfFiles) {
-    	    	String filePath = file.getPath();
+		tables.clear(); // clearing the array to avoid having duplicates
 
-    	    	Table table = Table.deserializeTable(filePath);	
-	        	tables.add(table);
-    	    }    
-        }
+		if (listOfFiles != null) {
+			for (File file : listOfFiles) {
+				String filePath = file.getPath();
 
-    } 
-	
-	
+				Table table = Table.deserializeTable(filePath);
+				tables.add(table);
+			}
+		}
 
-	public void createTable(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType)
-			throws DBAppException {
-		
-		this.init();
-
-		if(tableExists(strTableName) == null) {      
-			
-			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType , maximumRowsCountinPage);
-			tables.add(table);
-			
-		} else {
-			
-			throw new DBAppException("This table already exists.");
-			
-		}		
-	
 	}
 
-	public void createBRINIndex(String strTableName, String strColName)
-			throws DBAppException {
-		
-		//TODO 2 createBRINindex
+	public void createTable(String strTableName, String strClusteringKeyColumn,
+			Hashtable<String, String> htblColNameType) throws DBAppException {
+
+		this.init();
+
+		if (tableExists(strTableName) == null) {
+
+			Table table = new Table(strTableName, strClusteringKeyColumn, htblColNameType, maximumRowsCountinPage);
+			tables.add(table);
+
+		} else {
+
+			throw new DBAppException("This table already exists.");
+
+		}
+
+	}
+
+	public void createBRINIndex(String strTableName, String strColName) throws DBAppException {
+
+		// TODO 2 createBRINindex
 		Table targetTable = tableExists(strTableName);
-		if(targetTable == null)
+		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
-		else{
-			//Creating index goes here
+		else {
+			// Creating index goes here
 			Page page = null;
-			boolean isDate = (tableExists(strTableName).getColumnType(strColName)) == "java.util.Date"? true : false;
+			boolean isDate = (tableExists(strTableName).getColumnType(strColName)) == "java.util.Date" ? true : false;
 			DensePage denseLevel = new DensePage(isDate);
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
@@ -115,58 +109,52 @@ public class DBApp {
 				page.serializePage(path);
 			}
 		}
-	
+
 	}
 
-	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 
-			throws DBAppException {
-		
+	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
+
 		this.init();
-		
-	    Table table = tableExists(strTableName);
-	    Date date = new Date();
-	    htblColNameValue.put("TouchDate", date);
-	    
-		/* 
-		for (Table tableSearch : tables) {   // implemented in tableExits Method
-            if(tableSearch.getName().equals(strTableName)) {
-                table = tableSearch;
-                break;
-            }
-		} 
-		*/
-		if (table!= null)
-		    table.insertIntoPage(htblColNameValue);
+
+		Table table = tableExists(strTableName);
+		Date date = new Date();
+		htblColNameValue.put("TouchDate", date);
+
+		/*
+		 * for (Table tableSearch : tables) { // implemented in tableExits Method
+		 * if(tableSearch.getName().equals(strTableName)) { table = tableSearch; break;
+		 * } }
+		 */
+
+		if (table != null)
+			table.insertIntoPage(htblColNameValue);
 		else
-		    throw new DBAppException("Table does not exist!");
-		
+			throw new DBAppException("Table does not exist!");
+
 	}
 
-	public void updateTable(String strTableName, String strKey, Hashtable<String,Object> htblColNameValue )
+	public void updateTable(String strTableName, String strKey, Hashtable<String, Object> htblColNameValue)
 			throws DBAppException {
-		
+
 		this.init();
 		Table table = tableExists(strTableName);
-		
-		if (table!= null)
-		    table.updateFromPage(strKey ,htblColNameValue);
-		else
-		    throw new DBAppException("Table does not exist!");
 
-	
+		if (table != null)
+			table.updateFromPage(strKey, htblColNameValue);
+		else
+			throw new DBAppException("Table does not exist!");
+
 	}
 
-	public void deleteFromTable(String strTableName, Hashtable<String,Object> htblColNameValue)
-			throws DBAppException {
-		
+	public void deleteFromTable(String strTableName, Hashtable<String, Object> htblColNameValue) throws DBAppException {
+
 		this.init();
-		
+
 		Table table = tableExists(strTableName);
-		
-		if(table == null){
+
+		if (table == null) {
 			throw new DBAppException("Table does not exist");
-		}
-		else{
+		} else {
 			table.deleteFromPage(htblColNameValue);
 		}
 	}
@@ -175,31 +163,351 @@ public class DBApp {
 	public Iterator selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 
-		
-		//TODO 7 selectFromTable
+		// TODO 7 selectFromTable
+		if(tableExists(strTableName) != null) {
+
+			if (brinIndexed(strTableName, strColumnName)) {
+				return selectUsingBrinIndex(strTableName, strColumnName, objarrValues,
+						strarrOperators, null, true);
+			} else {
+				
+				return selectUsingExtensiveSearching(strTableName, strColumnName, objarrValues,
+						strarrOperators);
+			}
+			
+		}
 		
 		return null;
 
 	}
 	
+	private Iterator selectUsingExtensiveSearching(String strTableName, String strColumnName, Object[] objarrValues,
+			String[] strarrOperators) {
+		// TODO Normal Selection from table
+		
+		ArrayList<Page> selectedPages = new ArrayList<>();
+
+		return null;
+	}
+
+	private Iterator selectUsingBrinIndex(String strTableName, String strColumnName, Object[] objarrValues,
+			String[] strarrOperators, ArrayList<Object> selectedBackPages, boolean sparseLevel) {
+		
+		ArrayList<Object> selectedDensePages = new ArrayList<>();
+		ArrayList<Object> selectedSparsePages = new ArrayList<>();
+		
+		String type = getTypeOf(strTableName, strColumnName);
+		String[] listOfPathes;
+		
+		if(selectedBackPages == null) {
+			File folder = new File("/" + strTableName + "/" + strColumnName + "/OuterSparsePages/");
+			File[] listOfFiles = folder.listFiles();
+			listOfPathes = getPathes(listOfFiles);
+		} else {
+			listOfPathes = (String[]) selectedBackPages.toArray();
+		}
+
+
+		if (listOfPathes.length > 0) {
+			
+			if(sparseLevel) {
+				for (int pathIndex = 0; pathIndex < listOfPathes.length; pathIndex++) {
+					String filePath = listOfPathes[pathIndex];
+
+					BrinSparsePage sparsePage = BrinSparsePage.deserializeBrinSparsePage(filePath);
+					int pageSize = sparsePage.getSize();
+
+					for (int sp = 0; sp < pageSize; sp++) {
+						
+						boolean[] isItHere = new boolean[objarrValues.length];
+						isItHere[0] = true; isItHere[1]= true;
+						
+						for (int i = 0; i < 2; i++) {
+
+							Object currentValue = objarrValues[i];
+							
+							isItHere[i] = compareWithAllTypes((Object)sparsePage.getMin(sp),
+											(Object) sparsePage.getMax(sp),
+											(Object)currentValue,
+											strarrOperators[i], type);
+							
+						}
+						
+						if(isItHere[0] && isItHere[1]) { //You can loop over the array later if required
+							
+							Object ref = sparsePage.getRef(sp);
+							if(ref instanceof DensePage) {
+								selectedDensePages.add(sparsePage.getRef(sp));
+
+							}else if(ref instanceof BrinSparsePage) {
+								selectedSparsePages.add(sparsePage.getRef(sp));
+							}
+							
+						} else {
+							
+							if(!selectedSparsePages.isEmpty()) {
+								return selectUsingBrinIndex(strTableName, strColumnName, objarrValues,
+										strarrOperators, selectedSparsePages, true);
+							} else if(!selectedDensePages.isEmpty()) {
+								return selectUsingBrinIndex(strTableName, strColumnName, objarrValues,
+										strarrOperators, selectedSparsePages, false);
+							}
+						
+						}
+					}
+				}
+				
+			} else { //Dense Level
+				
+				ArrayList<Tuple> selectedTuples = new ArrayList<Tuple>();
+
+				
+				for (int pathIndex = 0; pathIndex < listOfPathes.length; pathIndex++) {
+					String filePath = listOfPathes[pathIndex];
+
+					DensePage densePage = DensePage.deserializeDensePage(filePath);
+					int pageSize = densePage.getSize();
+
+					for (Object denseValue : densePage.getIndexColumn()) {
+
+						boolean[] isItHere = new boolean[objarrValues.length];
+						isItHere[0] = true; isItHere[1]= true;
+						
+						for (int i = 0; i < 2; i++) {
+							
+							Object compareValue = objarrValues[i];
+							
+							isItHere[i] = compareWithAllTypes(denseValue,
+											(Object)compareValue,
+											strarrOperators[i], type);
+
+						}
+						
+						//TODO Look up the description for different order
+						/*
+						isItHere[0] = compareWithAllTypes(denseValue,
+								(Object)objarrValues[0],
+								strarrOperators[0], type);
+						
+						isItHere[1] = compareWithAllTypes(denseValue,
+								(Object)objarrValues[0],
+								strarrOperators[0], type);
+						*/
+						
+						if(isItHere[0] && isItHere[1]) { //You can loop over the array later if required
+							ArrayList<Tuple> ref = densePage.getTuples(denseValue);
+							
+							for(int i = 0; i<ref.size(); i++) {
+								selectedTuples.add(ref.get(i));
+							}
+							
+						}
+					}
+				}
+				
+			}
+	
+			
+		}
+		
+		return null;
+
+	}
+
+	private String[] getPathes(File[] listOfFiles) {
+		String[] pathes = new String [listOfFiles.length];
+		for( int i = 0; i<listOfFiles.length; i++) {
+			pathes[i] = listOfFiles[i].getPath();
+		}
+		return pathes;
+	}
+
+	private static boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
+		
+		switch (type) {
+		
+		case "java.lang.Integer":
+		case "java.lang.Double":
+			return compareWith((Double)min,
+					(Double) max,
+					(Double)currentValue,
+					operator);
+
+		case "java.lang.String":
+			return compareWith((String) min,
+					(String) max,
+					(String) currentValue,
+					operator);
+
+		case "java.lang.Boolean":
+			return compareWith((boolean) min,
+					(boolean) max,
+					(boolean) currentValue,
+					operator);
+
+		case "java.util.Date":
+			return compareWith((Date) min,
+					(Date) max,
+					(Date) currentValue,
+					operator);
+
+		default:
+			return false;
+		}
+
+	}
+
+	//TODO if < and not found make it stop the other method.
+	
+	private static boolean compareWith(double min, double max, double value, String operator) {
+		
+		switch(operator) {
+		
+		case ">": return (value > min);
+		case ">=": return (value >= min);
+		case "<": return (value < max);
+		case "<=": return (value <= max);
+		
+		}
+		return false;
+	}
+	
+	private static boolean compareWith(String min, String max, String value, String operator) {
+		
+		switch(operator) {
+		
+		case ">": return (value.compareTo(min) > 0);
+		case ">=": return (value.compareTo(min) >= 0);
+		case "<": return (value.compareTo(max) < 0);
+		case "<=": return (value.compareTo(max) <= 0);
+		
+		}
+		return false;
+	}
+	
+	private static boolean compareWith(boolean min, boolean max, boolean value, String operator) {
+		//No support for boolean Indexing
+		return false;
+	}
+	
+	private static boolean compareWith(Date min, Date max, Date value, String operator) {
+		
+		switch(operator) {
+		
+		case ">": return (value.compareTo(min) > 0);
+		case ">=": return (value.compareTo(min) >= 0);
+		case "<": return (value.compareTo(max) < 0);
+		case "<=": return (value.compareTo(max) <= 0);
+		
+		}
+		return false;
+	}
+	
+	private boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
+		
+		switch (type) {
+		
+		case "java.lang.Integer":
+		case "java.lang.Double":
+			return compareWith((Double) denseValue,
+					(Double)compareValue,
+					operator);
+
+		case "java.lang.String":
+			return compareWith((String) denseValue,
+					(String) compareValue,
+					operator);
+
+		case "java.lang.Boolean":
+			return compareWith((boolean) denseValue,
+					(boolean) compareValue,
+					operator);
+
+		case "java.util.Date":
+			return compareWith((Date) denseValue,
+					(Date) compareValue,
+					operator);
+
+		default:
+			return false;
+		}
+	}
+
+	private boolean compareWith(Double value, Double compareValue, String operator) {
+	
+		switch(operator) {
+		
+		case ">": return (value > compareValue);
+		case ">=": return (value >= compareValue);
+		case "<": return (value < compareValue);
+		case "<=": return (value <= compareValue);
+		
+		}
+		return false;
+	}
+	
+	private boolean compareWith(String value, String compareValue, String operator) {
+		
+		switch(operator) {
+		
+		case ">": return (value.compareTo(compareValue) > 0);
+		case ">=": return (value.compareTo(compareValue) >= 0);
+		case "<": return (value.compareTo(compareValue) < 0);
+		case "<=": return (value.compareTo(compareValue) <= 0);
+		
+		}
+		return false;
+	}
+	
+	private boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
+		//No support for boolean Indexing
+				return false;
+	}
+	
+	private boolean compareWith(Date value, Date compareValue, String operator) {
+		
+		switch(operator) {
+		
+		case ">": return (value.compareTo(compareValue) > 0);
+		case ">=": return (value.compareTo(compareValue) >= 0);
+		case "<": return (value.compareTo(compareValue) < 0);
+		case "<=": return (value.compareTo(compareValue) <= 0);
+		
+		}
+		return false;
+	}
+
+	private String getTypeOf(String strTableName, String strColumnName) {
+		// TODO Get stColumnName type out of the meta-data csv file in the
+		// strTableSection
+		return null;
+	}
+
+	private boolean brinIndexed(String strTableName, String strColumnName) {
+		// TODO Check if strTableName has BRINindex on strColumnName from the meta-data
+		// csv file
+		return false;
+	}
+
 	private Table tableExists(String tableName) {
-		//this.init();  //it makes stackoverflow , because in init method i call it so it.
+		// this.init(); //it makes stackoverflow , because in init method i call it so
+		// it.
 		Table reqTable = null;
 		for (Table table : tables) {
-			
-			if(table.getName().equals(tableName))
+
+			if (table.getName().equals(tableName))
 				reqTable = table;
 			else
-				System.out.println(tableName +"............."+table.getName());
+				System.out.println(tableName + "............." + table.getName());
 		}
 		return reqTable;
 	}
-	
+
 	public void printDB() {
-		
+
 		this.init();
 		System.out.println("This is all you have in the database: " + "\n");
-		for( Table table : tables) {
+		for (Table table : tables) {
 			System.out.println("\n" + " -----TABLE " + table.getName() + " STARTED------" + "\n");
 			table.printTableData();
 			System.out.println("\n" + " -----TABLE " + table.getName() + " FINSHED------" + "\n");
@@ -207,6 +515,3 @@ public class DBApp {
 		System.out.println("Everything has been printed.");
 	}
 }
-
-
-

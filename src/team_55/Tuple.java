@@ -8,7 +8,7 @@ public class Tuple implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -8646050217172196189L;
+	private static final long serialVersionUID = 1L;
 	private Hashtable<String, Object> colNameValue;
 	
 	public Hashtable<String, Object> getColNameValue() {

@@ -1,11 +1,8 @@
 package team_55;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-
-import javax.sound.midi.MidiChannel;
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
 /**
  * A class used to resemble a <tt>database dense index page</tt> through the use of
  * ArrayList of Objects for the index and another ArrayList of ArrayLists of tuples
@@ -17,9 +14,13 @@ import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
  * @see ArrayList
  */
 
-public class DensePage {
+public class DensePage implements Serializable {
     
-    private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
     private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
                                                                    an array of references to tuples matching that value */
     private boolean mIsDate = false;                            // true if the dense index is on a column of type date
@@ -159,5 +160,24 @@ public class DensePage {
         array.set(positionOfInsertion, new ArrayList<>());
     }
     
+    public int getSize() {
+    	//TODO must increment size of the tuples to return back when needed during operations
+    	
+    	return 0;
+    }
+    
+	public void serializeDensePage() {
+		//TODO serialization of the object
+	}
+	
+	public static DensePage deserializeDensePage(String filePath) {
+		//TODO deserialization of the object
+		
+		return null;
+	}
+    
+	public ArrayList<Object> getIndexColumn() {
+		return index;
+	}
 
 }
