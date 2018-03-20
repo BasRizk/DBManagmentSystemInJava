@@ -24,6 +24,7 @@ public class Table implements Serializable{
 	private String tableName;
 	private String primaryKeyName;
 	private Hashtable<String, String> ColName_Type;
+    private Hashtable<String, Boolean> ColName_Indexed;
 	private ArrayList<String> pagePathes;
 	private ArrayList<String> freePagesPathes; // contains free pages path does NOT contain lastPagePath
 	private String lastPagePath;
@@ -53,6 +54,14 @@ public class Table implements Serializable{
 				
 		this.numOfCol = ColName_Type.size();
 		this.numOfRows = 0;
+		
+		
+		@SuppressWarnings("unchecked")
+        ArrayList<String> keySet = (ArrayList<String>) ColName_Type.keySet();
+        ArrayList<String> keys = keySet;
+        for(String key: keys){
+            this.ColName_Indexed.put(key, false);
+        }
 
 		File pagesDir = new File("TablePages/"+strTableName);
 		pagesDir.mkdirs();
@@ -335,7 +344,14 @@ public class Table implements Serializable{
 	    return ColName_Type.get(colName);
 	}
 	
+	public void setColumnIndexed(String colName) {
+	    this.ColName_Indexed.remove(colName);
+	    this.ColName_Indexed.put(colName, true);
+	}
 	
+	public boolean isColumnIndexed(String colName) {
+	    return this.ColName_Indexed.get(colName);
+	}
 	
 	
 }

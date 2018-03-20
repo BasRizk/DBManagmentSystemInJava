@@ -91,9 +91,10 @@ public class DBApp {
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
-        String colType = (tableExists(strTableName).getColumnType(strColName));
 		//TODO 2 createBRINindex
 		Table targetTable = tableExists(strTableName);
+		targetTable.setColumnIndexed(strColName);
+        String colType = targetTable.getColumnType(strColName);
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
@@ -521,7 +522,9 @@ public class DBApp {
 	private boolean brinIndexed(String strTableName, String strColumnName) {
 		// TODO Check if strTableName has BRINindex on strColumnName from the meta-data
 		// csv file
-		return false;
+	    Table table = tableExists(strTableName);
+        boolean indexed = table.isColumnIndexed(strColumnName);
+		return indexed;
 	}
 
 	private Table tableExists(String tableName) {
