@@ -92,7 +92,7 @@ public class DBApp {
 
 	}
 
-	public void createBRINIndex(String strTableName, String strColName)
+public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
 		//TODO 2 createBRINindex
@@ -120,14 +120,14 @@ public class DBApp {
 	
 	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
 		String stringValue = (String) value;
-		boolean inserted = false;
-		
+		//boolean inserted = false;
+		int i = 0;
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
-			if(stringValue.compareTo((String)index.get(0)) > 0 && stringValue.compareTo((String)index.get(index.size())) <= 0){
+			if((stringValue.compareTo((String)index.get(0)) >= 0 && stringValue.compareTo((String)index.get(index.size())) <= 0) || stringValue.compareTo((String)index.get(0)) < 0) {
 				if(densePage.getSize() < maximumRowsCountinPage) {
 					densePage.insertInDenseIndex(value, tuple);
-					inserted = true;
+					//inserted = true;
 				}
 				else{
 					Object val = index.get(index.size());
@@ -135,19 +135,27 @@ public class DBApp {
 					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size());
 					densePage.deleteFromDenseIndex(val, tuple2);
 					densePage.insertInDenseIndex(value, tuple);
-					inserted = true;
-					insertIntoDensePage(densePages,val,tuple2, colType);
+					if(i == densePages.size() - 1){
+						densePages.add(new DensePage(colType));
+						densePages.get(densePages.size()).insertInDenseIndex(val, tuple2);
+					}
+					//inserted = true;
+					else
+						insertIntoDensePage((ArrayList<DensePage>)densePages.subList(i + 1, densePages.size()),val,tuple2, colType);
 				}
 				break;
 			}
+			i++;
+			
 		}
-		
+		/*
 		if(!inserted) {
 		    densePages.add(new DensePage(colType));
             insertIntoDensePage(densePages, value, tuple, colType);
 		}
-		
+		*/
 	}
+	
 	
 	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 
 			throws DBAppException {
