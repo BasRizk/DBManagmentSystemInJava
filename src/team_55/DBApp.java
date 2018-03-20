@@ -91,32 +91,6 @@ public class DBApp {
 		}
 
 	}
-
-public void createBRINIndex(String strTableName, String strColName)
-			throws DBAppException {
-		
-		//TODO 2 createBRINindex
-		Table targetTable = tableExists(strTableName);
-		targetTable.setColumnIndexed(strColName);
-        String colType = targetTable.getColumnType(strColName);
-		if (targetTable == null)
-			throw new DBAppException("table does not exist!");
-		else {
-			// Creating index goes here
-			Page page = null;
-
-			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
-			for (String path : targetTable.getPagePathes()) {
-				page = Page.deserializePage(path);
-				for (Tuple tuple : page.getRows()) {
-					//TODO adding exception if user entered wrong column name
-					Object value = tuple.getColNameValue().get(strColName);
-					insertIntoDensePage(densePages,value,tuple, colType);
-				}
-				page.serializePage(path);
-			}
-		}
-	}
 	
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
@@ -152,7 +126,7 @@ public void createBRINIndex(String strTableName, String strColName)
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
 		for (BrinSparsePage sparsePage : sparsePages) {
 			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == maximumRowsCountinPage)
-				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage",2));
+				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage"));
 			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size());
 			lastPage.getMinIndexCol().add(sparsePage.getMin(0));
 			lastPage.getMaxIndexCol().add(sparsePage.getMax(sparsePage.getSize()));
@@ -164,7 +138,7 @@ public void createBRINIndex(String strTableName, String strColName)
 		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
 		for (DensePage densePage : densePages) {
 			if(sparsePages.get(sparsePages.size()).getSize() == maximumRowsCountinPage)
-				sparsePages.add(new BrinSparsePage("DensePage",1));
+				sparsePages.add(new BrinSparsePage("DensePage"));
 			BrinSparsePage lastPage = sparsePages.get(sparsePages.size());
 			lastPage.getMinIndexCol().add(densePage.getIndex().get(0));
 			lastPage.getMaxIndexCol().add(densePage.getIndex().get(densePage.getIndex().size()));
