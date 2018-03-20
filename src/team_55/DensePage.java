@@ -184,7 +184,41 @@ public class DensePage implements Serializable{
                 array.set(i, array.get(i-1));
             }
         
-            array.set(positionOfInsertion, stringValue);      // TODO Should we insert the value before casting or after casting?
+            array.set(positionOfInsertion, stringValue);
+        
+        } else if (colType == "java.util.Integer") {
+            int intValue = (int) value;
+            int positionOfInsertion = 0;
+        
+            for(Object indexInArray : array) {
+                if( intValue < (int) indexInArray ) {
+                    positionOfInsertion = array.indexOf(indexInArray);
+                    break;
+                }
+            }
+        
+            for(int i = array.size(); i >= positionOfInsertion; i--) {
+                array.set(i, array.get(i-1));
+            }
+        
+            array.set(positionOfInsertion, intValue);
+        
+        } else if (colType == "java.util.Double") {
+            Double doubleValue = (Double) value;
+            int positionOfInsertion = 0;
+        
+            for(Object indexInArray : array) {
+                if( doubleValue < (Double) indexInArray ) {
+                    positionOfInsertion = array.indexOf(indexInArray);
+                    break;
+                }
+            }
+        
+            for(int i = array.size(); i >= positionOfInsertion; i--) {
+                array.set(i, array.get(i-1));
+            }
+        
+            array.set(positionOfInsertion, doubleValue);
         
         } else {
             Date dateValue = (Date) value;
@@ -201,7 +235,7 @@ public class DensePage implements Serializable{
                 array.set(i, array.get(i-1));
             }
         
-            array.set(positionOfInsertion, dateValue);      // TODO Should we insert the value before casting or after casting?
+            array.set(positionOfInsertion, dateValue);
         }
         
     }
