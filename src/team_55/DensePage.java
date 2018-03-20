@@ -1,5 +1,12 @@
 package team_55;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -17,9 +24,12 @@ import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
  * @see ArrayList
  */
 
-public class DensePage {
+
+public class DensePage implements Serializable{
     
-    private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
+	private static final long serialVersionUID = 1L;
+
+	private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
     private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
                                                                    an array of references to tuples matching that value */
     private boolean mIsDate = false;                            // true if the dense index is on a column of type date
@@ -33,8 +43,53 @@ public class DensePage {
         index = new ArrayList<>();
         mIsDate = isDate;
     }
-
     
+	public void serializePage(String tablePath) {
+		
+		//File tableDir = new File("../tableName/");
+		//tablePath.mkdirs();
+		
+		try {
+			
+            FileOutputStream fos = new FileOutputStream(tablePath);
+            ObjectOutputStream oos;
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+            oos.close();
+            fos.close();
+	        
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static DensePage deserializePage(String pagePath) {
+		
+		DensePage page = null;
+		
+		try {
+	        
+            FileInputStream fis = new FileInputStream(pagePath);
+            ObjectInputStream ois;
+            ois = new ObjectInputStream(fis);
+            page = (DensePage) ois.readObject();
+            ois.close();
+            fis.close();
+            
+        } catch (Exception e) {
+            //TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+		
+		return page;
+	}
+	
+	
     /**
      * Returns an ArrayList of Tuples that are matching a value in the column that the DenseIndex is on
      * @param colValue is the column value of the tuples needed
