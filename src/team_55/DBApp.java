@@ -10,6 +10,19 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+/**
+ * A Basic Database Engine that supports Brin Indexing,
+ * Developed during the course work of DATABASES II 
+ * CSEN 603 in the German University in Cairo
+ * 
+ * Main Class : DBApp
+ * 
+ * @authors Basem Rizk, Michael Khalil, Steven Nassef, and Ibram Abdel Malek
+ *
+ * 
+ *
+ */
+
 public class DBApp {
 	
 	public ArrayList<Table> tables;
@@ -19,13 +32,13 @@ public class DBApp {
 
 	public DBApp() {
 
+		//TODO Make sure that every needed Directory is Created
 		DBAppConfig config;
 		try {
 			config = new DBAppConfig();
 			maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
 			mBRINSize = config.getmBRINSize();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -33,7 +46,7 @@ public class DBApp {
 
 		// Creating the global meta-data file
 
-		String metadataPath = "data\\metadata.csv";
+		String metadataPath = META_DATA_DIR;
 		File metadataFile = new File(metadataPath);
 
 		if (!metadataFile.exists()) {
@@ -55,7 +68,6 @@ public class DBApp {
 			maximumRowsCountinPage = config.getmMaximumRowsCountinPage();
 			mBRINSize = config.getmBRINSize();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -118,6 +130,8 @@ public class DBApp {
 			}
 			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages);
 			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel);
+			
+			
 			
 		}
 	}
@@ -242,7 +256,6 @@ public class DBApp {
 	public Iterator<Tuple> selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 
-		// TODO 7 selectFromTable
 		if(tableExists(strTableName) != null) {
 
 			if (brinIndexed(strTableName, strColumnName)) {
@@ -262,7 +275,6 @@ public class DBApp {
 	
 	private Iterator<Tuple> selectUsingExtensiveSearching(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) {
-		// TODO Normal Selection from table
 		
 		//TODO Do something to check if columnName actually exists in the table
 		
@@ -385,7 +397,6 @@ public class DBApp {
 					String filePath = listOfPathes[pathIndex];
 
 					DensePage densePage = DensePage.deserializeDensePage(filePath);
-					int pageSize = densePage.getSize();
 
 					for (Object denseValue : densePage.getIndexColumn()) {
 
@@ -623,10 +634,11 @@ public class DBApp {
 				if(currentTable.equals(strTableName)
 						&& currentColumn.equals(strColumnName)) {
 					String indexed = lineSplit[4].replaceAll(" ", "");
+					metaBuffer.close();
 					return (indexed.equals("true"));
 				}
 			}
-			
+			metaBuffer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
