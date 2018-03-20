@@ -160,7 +160,7 @@ public class DBApp {
 		int i = 0;
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
-			if((stringValue.compareTo((String)index.get(0)) >= 0 && stringValue.compareTo((String)index.get(index.size())) <= 0) || stringValue.compareTo((String)index.get(0)) < 0) {
+			if((compareWithAllTypes(value, densePage.getIndex().get(0),">=", colType)& compareWithAllTypes(value, densePage.getIndex().get(densePage.getIndex().size()),"<=", colType)) || compareWithAllTypes(value, densePage.getIndex().get(0),"<", colType)) {
 				if(densePage.getSize() < maximumRowsCountinPage) {
 					densePage.insertInDenseIndex(value, tuple);
 					//inserted = true;
@@ -445,7 +445,7 @@ public class DBApp {
 		return pathes;
 	}
 
-	private static boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
+	private boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
 		
 		switch (type) {
 		
@@ -526,7 +526,7 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
+	private static boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
 		
 		switch (type) {
 		
@@ -556,7 +556,7 @@ public class DBApp {
 		}
 	}
 
-	private boolean compareWith(Double value, Double compareValue, String operator) {
+	private static boolean compareWith(Double value, Double compareValue, String operator) {
 	
 		switch(operator) {
 		
@@ -569,7 +569,7 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWith(String value, String compareValue, String operator) {
+	private static boolean compareWith(String value, String compareValue, String operator) {
 		
 		switch(operator) {
 		
@@ -582,12 +582,12 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
+	private static boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
 		//No support for boolean Indexing
 				return false;
 	}
 	
-	private boolean compareWith(Date value, Date compareValue, String operator) {
+	private static boolean compareWith(Date value, Date compareValue, String operator) {
 		
 		switch(operator) {
 		
