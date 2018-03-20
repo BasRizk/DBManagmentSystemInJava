@@ -79,6 +79,15 @@ public class DensePage {
             index.remove(colValue);
 
     }
+    public int getSize(){ //give the total number of references in the page
+    	int size = 0;
+    	for (ArrayList<Tuple> tuples : tupleReferences) {
+    		for (Tuple tuple : tuples)
+				size++;
+			
+		}
+    	return size;
+    }
     
 // Update will better work from outside the class using delete followed by insert, because it might need to be inserted in different page    
 //    /**
@@ -158,6 +167,11 @@ public class DensePage {
         
         array.set(positionOfInsertion, new ArrayList<>());
     }
+
+
+	public ArrayList<Object> getIndex() {
+		return index;
+	}
     
 
 }
