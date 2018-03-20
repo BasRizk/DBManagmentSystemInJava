@@ -104,7 +104,7 @@ public class DBApp {
 		else{
 			//Creating index goes here
 			Page page = null;
-			DensePage denseLevel = new DensePage();
+			DensePage denseLevel = new DensePage();                  // Constructor now takes an input of type boolean
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
 				for (Tuple tuple : page.getRows()) {

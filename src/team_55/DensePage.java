@@ -1,6 +1,10 @@
 package team_55;
 
 import java.util.ArrayList;
+import java.util.Date;
+
+import javax.sound.midi.MidiChannel;
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 /**
  * A class used to resemble a <tt>database dense index page</tt> through the use of
@@ -17,11 +21,17 @@ public class DensePage {
     
     private ArrayList<Object> index;                            // values of the column that the index is built on, should be sorted
     private ArrayList<ArrayList<Tuple>> tupleReferences;        /* sorted according to index Array such that each value in index array corresponds to
-                                                                   an array of references to tuples matching that value */    
+                                                                   an array of references to tuples matching that value */
+    private boolean mIsDate = false;                            // true if the dense index is on a column of type date
     
-    public DensePage() {   
+    /**
+     * A Dense page
+     * @param isDate true if the dense index is on a column of type date
+     */
+    public DensePage(boolean isDate) {   
         tupleReferences = new ArrayList<>();
         index = new ArrayList<>();
+        mIsDate = isDate;
     }
 
     
@@ -43,7 +53,7 @@ public class DensePage {
     public void insertInDenseIndex(Object colValue, Tuple tuple) {
         
         if(!index.contains(colValue)) {
-            insertionSort(index, colValue);
+            insertionSort(index, colValue, mIsDate);
             insertionSortForArray(tupleReferences, index.indexOf(colValue));
         }
         
@@ -95,22 +105,42 @@ public class DensePage {
      * @param array is the array list that the value will be inserted in
      * @param value is the value to be inserted in array
      */
-    private static void insertionSort(ArrayList<Object> array, Object value) {          // TODO make it work for all Data Types
-        String stringValue = (String) value;
-        int positionOfInsertion = 0;
+    private static void insertionSort(ArrayList<Object> array, Object value, boolean isDate) {
         
-        for(Object indexInArray : array) {
-            if( stringValue.compareTo((String) indexInArray) < 0 ) {
-                positionOfInsertion = array.indexOf(indexInArray);
-                break;
+        if(!isDate) {
+            String stringValue = (String) value;
+            int positionOfInsertion = 0;
+        
+            for(Object indexInArray : array) {
+                if( stringValue.compareTo((String) indexInArray) < 0 ) {
+                    positionOfInsertion = array.indexOf(indexInArray);
+                    break;
+                }
             }
-        }
         
-        for(int i = array.size(); i >= positionOfInsertion; i--) {
-            array.set(i, array.get(i-1));
-        }
+            for(int i = array.size(); i >= positionOfInsertion; i--) {
+                array.set(i, array.get(i-1));
+            }
         
-        array.set(positionOfInsertion, stringValue);      // TODO Should we insert the value before parsing or after parsing?
+            array.set(positionOfInsertion, stringValue);      // TODO Should we insert the value before casting or after casting?
+        
+        } else {
+            Date dateValue = (Date) value;
+            int positionOfInsertion = 0;
+        
+            for(Object indexInArray : array) {
+                if( dateValue.compareTo((Date) indexInArray) < 0 ) {
+                    positionOfInsertion = array.indexOf(indexInArray);
+                    break;
+                }
+            }
+        
+            for(int i = array.size(); i >= positionOfInsertion; i--) {
+                array.set(i, array.get(i-1));
+            }
+        
+            array.set(positionOfInsertion, dateValue);      // TODO Should we insert the value before casting or after casting?
+        }
         
     }
     
