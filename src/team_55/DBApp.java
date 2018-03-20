@@ -121,7 +121,7 @@ public class DBApp {
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
-		//TODO 2 createBRINindex
+		init();
 		Table targetTable = tableExists(strTableName);
 		
 		if (targetTable == null)
@@ -301,6 +301,8 @@ public class DBApp {
 	public Iterator<Tuple> selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 
+		init();
+		
 		if(tableExists(strTableName) != null) {
 
 			if (brinIndexed(strTableName, strColumnName)) {
@@ -382,7 +384,6 @@ public class DBApp {
 		} else {
 			listOfPathes = (String[]) selectedBackPages.toArray();
 		}
-
 
 		if (listOfPathes.length > 0) {
 			
