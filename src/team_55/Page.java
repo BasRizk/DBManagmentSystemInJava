@@ -111,7 +111,6 @@ public class Page implements Serializable {
     }
 	
 	public void updateRow(String strKey, String primaryKeyName ,Hashtable<String, Object> htblColNameValue, String primaryKeyType) {
-		// TODO handle the cases that primary key is date or double
 	    
 	    Tuple tuple = null;
 	    
