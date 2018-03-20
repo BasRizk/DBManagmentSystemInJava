@@ -181,13 +181,13 @@ public class DBApp {
 					//inserted = true;
 				}
 				else{
-					Object val = index.get(index.size());
-					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size());
+					Object val = index.get(index.size() - 1);
+					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size() - 1);
 					densePage.deleteFromDenseIndex(val, tuple2);
 					densePage.insertInDenseIndex(value, tuple);
 					if(i == densePages.size() - 1){
 						densePages.add(new DensePage(colType));
-						densePages.get(densePages.size()).insertInDenseIndex(val, tuple2);
+						densePages.get(densePages.size() - 1).insertInDenseIndex(val, tuple2);
 					}
 					//inserted = true;
 					else
