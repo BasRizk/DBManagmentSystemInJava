@@ -14,8 +14,6 @@ import java.util.ArrayList;
  * a (DensePage) or a (BrinSparsePage)
  * aiming to develop a BrinIndex 
  *
- * 
- * @author Basem Rizk
  *
  */
 
