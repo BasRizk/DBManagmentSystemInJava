@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -413,6 +414,8 @@ public class DBApp {
 			listOfPathes = (String[]) selectedBackPages.toArray();
 		}
 
+		Arrays.sort(listOfPathes);
+		
 		if (listOfPathes.length > 0) {
 			
 			if(sparseLevel) {
