@@ -127,7 +127,20 @@ public class DBApp {
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
-			// Creating index goes here
+			
+			
+			File tableDir;
+			String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + OUTER_SPARSE_DIR;
+			tableDir = new File(outerSparsePagesDir);
+			tableDir.mkdirs();
+			String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + INNER_SPARSE_DIR;
+			tableDir = new File(innerSparsePagesDir);
+			tableDir.mkdirs();
+			String densePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + DENSE_DIR;
+			tableDir = new File(densePagesDir);
+			tableDir.mkdirs();
+
+			
 			Page page = null;
 
 			targetTable.setColumnIndexed(strColName);
@@ -143,19 +156,8 @@ public class DBApp {
 				}
 				page.serializePage(path);
 			}
-			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages);
-			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel);
-			
-			File tableDir;
-			String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + OUTER_SPARSE_DIR;
-			tableDir = new File(outerSparsePagesDir);
-			tableDir.mkdirs();
-			String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + INNER_SPARSE_DIR;
-			tableDir = new File(innerSparsePagesDir);
-			tableDir.mkdirs();
-			String densePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + DENSE_DIR;
-			tableDir = new File(densePagesDir);
-			tableDir.mkdirs();
+			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages, densePagesDir);
+			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel, innerSparsePagesDir);
 
 			serializeAllSparsePages(sparsePagesSecondLevel, outerSparsePagesDir);
 			serializeAllSparsePages(sparsePagesFirstLevel, innerSparsePagesDir);
@@ -176,26 +178,32 @@ public class DBApp {
 		}
 	}
 
-	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages){
+	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages, String beforePagesDir){
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
+		int counterOfSparsePages = 0;
 		for (BrinSparsePage sparsePage : sparsePages) {
 			if(secondLevelSparsePages.get(secondLevelSparsePages.size() - 1).getSize() == mBRINSize)
-				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage"));
+				secondLevelSparsePages.add(new BrinSparsePage());
 			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size() - 1);
 			lastPage.getMinIndexCol().add(sparsePage.getMin(0));
 			lastPage.getMaxIndexCol().add(sparsePage.getMax(sparsePage.getSize() - 1));
+			lastPage.getRefCol().add(beforePagesDir + "sparsePage_" + counterOfSparsePages + ".ser");
+			counterOfSparsePages++;
 		}
 		return secondLevelSparsePages;
 	}
 	
-	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages){
+	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages, String beforePagesDir){
 		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
+		int counterOfDensePages = 0;
 		for (DensePage densePage : densePages) {
 			if(sparsePages.get(sparsePages.size() - 1).getSize() == mBRINSize)
-				sparsePages.add(new BrinSparsePage("DensePage"));
+				sparsePages.add(new BrinSparsePage());
 			BrinSparsePage lastPage = sparsePages.get(sparsePages.size() - 1);
 			lastPage.getMinIndexCol().add(densePage.getIndex().get(0));
 			lastPage.getMaxIndexCol().add(densePage.getIndex().get(densePage.getIndex().size() - 1));
+			lastPage.getRefCol().add(beforePagesDir + "densePage_" + counterOfDensePages + ".ser");
+			counterOfDensePages++;
 		}
 		return sparsePages;
 	}
@@ -241,6 +249,7 @@ public class DBApp {
 		}
 		*/
 	}
+	
 	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 
 			throws DBAppException {
 		
