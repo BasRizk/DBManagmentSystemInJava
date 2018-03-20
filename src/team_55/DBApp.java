@@ -126,7 +126,16 @@ public class DBApp {
 		
 		for (String key : table.getColName_Type().keySet()) {
 			if(table.isIndexed(key)) {
-				
+				File tableDir;
+				String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + key + "/" + OUTER_SPARSE_DIR;
+				tableDir = new File(outerSparsePagesDir);
+				tableDir.delete();
+				String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + key + "/" + INNER_SPARSE_DIR;
+				tableDir = new File(innerSparsePagesDir);
+				tableDir.delete();
+				String densePagesDir = TABLES_DIR + strTableName + "/" + key + "/" + DENSE_DIR;
+				tableDir = new File(densePagesDir);
+				tableDir.delete();
 				createBRINIndex(strTableName, key);
 			}
 		}
@@ -270,8 +279,10 @@ public class DBApp {
 		 * } }
 		 */
 
-		if (table != null)
+		if (table != null) {
 			table.insertIntoPage(htblColNameValue);
+			updateBRINIndex(strTableName);
+		}
 		else
 			throw new DBAppException("Table does not exist!");
 
@@ -283,8 +294,10 @@ public class DBApp {
 		this.init();
 		Table table = tableExists(strTableName);
 
-		if (table != null)
+		if (table != null) {
 			table.updateFromPage(strKey, htblColNameValue);
+			updateBRINIndex(strTableName);
+		}
 		else
 			throw new DBAppException("Table does not exist!");
 
@@ -300,6 +313,7 @@ public class DBApp {
 			throw new DBAppException("Table does not exist");
 		} else {
 			table.deleteFromPage(htblColNameValue);
+			updateBRINIndex(strTableName);
 		}
 	}
 
