@@ -27,7 +27,7 @@ public class DBApp {
 	
 	public ArrayList<Table> tables;
 	private static int maximumRowsCountinPage = 100;
-	private int mBRINSize = 15;
+	private static int mBRINSize = 15;
 	private final static String META_DATA_DIR = "data\\metadata.csv";
 
 	public DBApp() {
@@ -108,16 +108,15 @@ public class DBApp {
 			throws DBAppException {
 		
 		//TODO 2 createBRINindex
-		Table targetTable = tableExists(strTableName);		    
+		Table targetTable = tableExists(strTableName);
+		targetTable.setColumnIndexed(strColName);
+        String colType = targetTable.getColumnType(strColName);
 		if (targetTable == null)
 			throw new DBAppException("table does not exist!");
 		else {
 			// Creating index goes here
 			Page page = null;
 
-			targetTable.setColumnIndexed(strColName);
-            String colType = targetTable.getColumnType(strColName);
-			
 			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
 			for (String path : targetTable.getPagePathes()) {
 				page = Page.deserializePage(path);
@@ -140,7 +139,7 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages){
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
 		for (BrinSparsePage sparsePage : sparsePages) {
-			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == maximumRowsCountinPage)
+			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == mBRINSize)
 				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage"));
 			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size());
 			lastPage.getMinIndexCol().add(sparsePage.getMin(0));
@@ -152,7 +151,7 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages){
 		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
 		for (DensePage densePage : densePages) {
-			if(sparsePages.get(sparsePages.size()).getSize() == maximumRowsCountinPage)
+			if(sparsePages.get(sparsePages.size()).getSize() == mBRINSize)
 				sparsePages.add(new BrinSparsePage("DensePage"));
 			BrinSparsePage lastPage = sparsePages.get(sparsePages.size());
 			lastPage.getMinIndexCol().add(densePage.getIndex().get(0));
@@ -164,7 +163,6 @@ public class DBApp {
 	
 	
 	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
-		String stringValue = (String) value;
 		//boolean inserted = false;
 		if(densePages.size() == 0){
 			DensePage firstPage = new DensePage(colType);
@@ -175,8 +173,8 @@ public class DBApp {
 		int i = 0;
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
-			if((stringValue.compareTo((String)index.get(0)) >= 0 && stringValue.compareTo((String)index.get(index.size())) <= 0) || stringValue.compareTo((String)index.get(0)) < 0) {
-				if(densePage.getSize() < maximumRowsCountinPage) {
+			if((compareWithAllTypes(value, densePage.getIndex().get(0),">=", colType) && compareWithAllTypes(value, densePage.getIndex().get(densePage.getIndex().size()),"<=", colType)) || compareWithAllTypes(value, densePage.getIndex().get(0),"<", colType)) {
+				if(densePage.getSize() < mBRINSize) {
 					densePage.insertInDenseIndex(value, tuple);
 					//inserted = true;
 				}
@@ -457,7 +455,7 @@ public class DBApp {
 		return pathes;
 	}
 
-	private static boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
+	private boolean compareWithAllTypes(Object min, Object max, Object currentValue, String operator, String type) {
 		
 		switch (type) {
 		
@@ -538,7 +536,7 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
+	private static boolean compareWithAllTypes(Object denseValue, Object compareValue, String operator, String type) {
 		
 		switch (type) {
 		
@@ -568,7 +566,7 @@ public class DBApp {
 		}
 	}
 
-	private boolean compareWith(Double value, Double compareValue, String operator) {
+	private static boolean compareWith(Double value, Double compareValue, String operator) {
 	
 		switch(operator) {
 		
@@ -581,7 +579,7 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWith(String value, String compareValue, String operator) {
+	private static boolean compareWith(String value, String compareValue, String operator) {
 		
 		switch(operator) {
 		
@@ -594,12 +592,12 @@ public class DBApp {
 		return false;
 	}
 	
-	private boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
+	private static boolean compareWith(boolean denseValue, boolean compareValue, String operator) {
 		//No support for boolean Indexing
 				return false;
 	}
 	
-	private boolean compareWith(Date value, Date compareValue, String operator) {
+	private static boolean compareWith(Date value, Date compareValue, String operator) {
 		
 		switch(operator) {
 		
