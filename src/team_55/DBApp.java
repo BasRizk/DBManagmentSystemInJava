@@ -180,7 +180,7 @@ public class DBApp {
 				}
 				page.serializePage(path);
 			}
-			System.out.println(densePages.size());
+
 			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages, densePagesDir);
 			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel, innerSparsePagesDir);
 
@@ -192,13 +192,13 @@ public class DBApp {
 	}
 	
 	private void serializeAllSparsePages(ArrayList<BrinSparsePage> sparsePages, String sparsePagesDir) {
-		for(int i=0; i<= sparsePages.size(); i++) {
+		for(int i=0; i< sparsePages.size(); i++) {
 			sparsePages.get(i).serializeBrinSparsePage(sparsePagesDir + "sparsePage_" + i + ".ser");
 		}
 	}
 	
 	private void serializeAllDensePages(ArrayList<DensePage> densePages, String densePagesDir) {
-		for(int i=0; i<= densePages.size(); i++) {
+		for(int i=0; i< densePages.size(); i++) {
 			densePages.get(i).serializeDensePage(densePagesDir + "densePage_" + i + ".ser");
 		}
 	}
@@ -730,7 +730,7 @@ public class DBApp {
 		Table reqTable = null;
 		for (Table table : tables) {
 
-			if (table.getName().equals(tableName))
+		    if (table.getName().equals(tableName))
 				reqTable = table;
 			else
 				System.out.println(tableName + "............." + table.getName());
