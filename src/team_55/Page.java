@@ -120,7 +120,7 @@ public class Page implements Serializable {
 	    } else if(primaryKeyType.equals("java.lang.Double")) {
 	        Double doubleKey = Double.parseDouble(strKey);
             tuple = findTupleDouble(doubleKey, primaryKeyName);
-	    } else if(primaryKeyType.equals("java.lang.Date")) {
+	    } else if(primaryKeyType.equals("java.util.Date")) {
 	        Date dateKey = (Date) ((Object) strKey);
             tuple = findTupleDate(dateKey, primaryKeyName);
 	    } else {

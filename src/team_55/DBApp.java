@@ -201,6 +201,7 @@ public class DBApp {
 	private void serializeAllDensePages(ArrayList<DensePage> densePages, String densePagesDir) {
 		for(int i=0; i< densePages.size(); i++) {
 			densePages.get(i).serializeDensePage(densePagesDir + "densePage_" + i + ".ser");
+
 		}
 	}
 
