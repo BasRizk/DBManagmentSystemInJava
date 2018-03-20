@@ -92,7 +92,7 @@ public class DBApp {
 
 	}
 
-public void createBRINIndex(String strTableName, String strColName)
+	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
 		//TODO 2 createBRINindex
