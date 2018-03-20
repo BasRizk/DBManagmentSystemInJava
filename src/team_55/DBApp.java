@@ -511,9 +511,11 @@ public class DBApp {
 	}
 
 	private String getTypeOf(String strTableName, String strColumnName) {
-		// TODO Get stColumnName type out of the meta-data csv file in the
-		// strTableSection
-		return null;
+	 // TODO Get stColumnName type out of the meta-data csv file in the
+        // strTableSection
+		Table table = tableExists(strTableName);
+		String type = table.getColumnType(strColumnName);
+		return type;
 	}
 
 	private boolean brinIndexed(String strTableName, String strColumnName) {
