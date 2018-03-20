@@ -92,6 +92,20 @@ public class DBApp {
 
 	}
 	
+	private void updateBRINIndex(String strTableName) throws DBAppException {
+		
+		Table table = tableExists(strTableName);
+		
+		table.getColName_Type().keySet();
+		
+		for (String key : table.getColName_Type().keySet()) {
+			if(table.isIndexed(key)) {
+				
+				createBRINIndex(strTableName, key);
+			}
+		}
+	}
+	
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
