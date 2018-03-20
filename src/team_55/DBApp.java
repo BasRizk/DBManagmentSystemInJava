@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -144,7 +145,7 @@ public class DBApp {
 	public void createBRINIndex(String strTableName, String strColName)
 			throws DBAppException {
 		
-		//TODO 2 createBRINindex
+		init();
 		Table targetTable = tableExists(strTableName);
 		
 		if (targetTable == null)
@@ -329,6 +330,8 @@ public class DBApp {
 	public Iterator<Tuple> selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 
+		init();
+		
 		if(tableExists(strTableName) != null) {
 
 			if (brinIndexed(strTableName, strColumnName)) {
@@ -411,7 +414,8 @@ public class DBApp {
 			listOfPathes = (String[]) selectedBackPages.toArray();
 		}
 
-
+		Arrays.sort(listOfPathes);
+		
 		if (listOfPathes.length > 0) {
 			
 			if(sparseLevel) {
