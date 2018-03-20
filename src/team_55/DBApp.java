@@ -3,8 +3,10 @@ package team_55;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -29,6 +31,18 @@ public class DBApp {
 	private static int maximumRowsCountinPage = 100;
 	private static int mBRINSize = 15;
 	private final static String META_DATA_DIR = "data\\metadata.csv";
+	private final static String TABLES_DIR = "Tables/";
+	private final static String OUTER_SPARSE_DIR = "IndexPages/OuterSparsePages/";
+	private final static String INNER_SPARSE_DIR = "IndexPages/InnerSparsePages/";
+	private final static String DENSE_DIR = "IndexPages/DensePages/";
+	
+	/*
+	 * Indexes are saved such in the following format:
+	 * 
+	 * TABLES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR
+	 * 
+	 * 
+	 */
 
 	public DBApp() {
 
@@ -71,7 +85,7 @@ public class DBApp {
 			e1.printStackTrace();
 		}
 
-		File folder = new File("Tables/");
+		File folder = new File(TABLES_DIR);
 		File[] listOfFiles = folder.listFiles();
 		tables.clear(); // clearing the array to avoid having duplicates
 
@@ -130,12 +144,36 @@ public class DBApp {
 			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages);
 			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel);
 			
-			
+			File tableDir;
+			String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + OUTER_SPARSE_DIR;
+			tableDir = new File(outerSparsePagesDir);
+			tableDir.mkdirs();
+			String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + INNER_SPARSE_DIR;
+			tableDir = new File(innerSparsePagesDir);
+			tableDir.mkdirs();
+			String densePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + DENSE_DIR;
+			tableDir = new File(densePagesDir);
+			tableDir.mkdirs();
+
+			serializeAllSparsePages(sparsePagesSecondLevel, outerSparsePagesDir);
+			serializeAllSparsePages(sparsePagesFirstLevel, innerSparsePagesDir);
+			serializeAllDensePages(densePages, densePagesDir);
 			
 		}
 	}
 	
+	private void serializeAllSparsePages(ArrayList<BrinSparsePage> sparsePages, String sparsePagesDir) {
+		for(int i=0; i<= sparsePages.size(); i++) {
+			sparsePages.get(i).serializeBrinSparsePage(sparsePagesDir + "sparsePage_" + i + ".ser");
+		}
+	}
 	
+	private void serializeAllDensePages(ArrayList<DensePage> densePages, String densePagesDir) {
+		for(int i=0; i<= densePages.size(); i++) {
+			densePages.get(i).serializeDensePage(densePagesDir + "densePage_" + i + ".ser");
+		}
+	}
+
 	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages){
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
 		for (BrinSparsePage sparsePage : sparsePages) {
@@ -159,9 +197,7 @@ public class DBApp {
 		}
 		return sparsePages;
 	}
-	
-	
-	
+
 	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
 		//boolean inserted = false;
 		if(densePages.size() == 0){
@@ -329,7 +365,7 @@ public class DBApp {
 		String[] listOfPathes;
 		
 		if(selectedBackPages == null) {
-			File folder = new File("/" + strTableName + "/" + strColumnName + "/OuterSparsePages/");
+			File folder = new File(TABLES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR);
 			File[] listOfFiles = folder.listFiles();
 			listOfPathes = getPathes(listOfFiles);
 		} else {
@@ -646,8 +682,7 @@ public class DBApp {
 	}
 
 	private Table tableExists(String tableName) {
-		// this.init(); //it makes stackoverflow , because in init method i call it so
-		// it.
+
 		Table reqTable = null;
 		for (Table table : tables) {
 
