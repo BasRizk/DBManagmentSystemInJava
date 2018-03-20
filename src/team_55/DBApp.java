@@ -33,6 +33,7 @@ public class DBApp {
 	private static int mBRINSize = 15;
 	private final static String META_DATA_DIR = "data\\metadata.csv";
 	private final static String TABLES_DIR = "Tables/";
+	private final static String INDEXES_DIR = "Indexes/";
 	private final static String OUTER_SPARSE_DIR = "IndexPages/OuterSparsePages/";
 	private final static String INNER_SPARSE_DIR = "IndexPages/InnerSparsePages/";
 	private final static String DENSE_DIR = "IndexPages/DensePages/";
@@ -40,7 +41,7 @@ public class DBApp {
 	/*
 	 * Indexes are saved such in the following format:
 	 * 
-	 * TABLES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR
+	 * INDEXES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR
 	 * 
 	 * 
 	 */
@@ -128,13 +129,13 @@ public class DBApp {
 		for (String key : table.getColName_Type().keySet()) {
 			if(table.isIndexed(key)) {
 				File tableDir;
-				String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + key + "/" + OUTER_SPARSE_DIR;
+				String outerSparsePagesDir = INDEXES_DIR + strTableName + "/" + key + "/" + OUTER_SPARSE_DIR;
 				tableDir = new File(outerSparsePagesDir);
 				tableDir.delete();
-				String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + key + "/" + INNER_SPARSE_DIR;
+				String innerSparsePagesDir = INDEXES_DIR + strTableName + "/" + key + "/" + INNER_SPARSE_DIR;
 				tableDir = new File(innerSparsePagesDir);
 				tableDir.delete();
-				String densePagesDir = TABLES_DIR + strTableName + "/" + key + "/" + DENSE_DIR;
+				String densePagesDir = INDEXES_DIR + strTableName + "/" + key + "/" + DENSE_DIR;
 				tableDir = new File(densePagesDir);
 				tableDir.delete();
 				createBRINIndex(strTableName, key);
@@ -154,13 +155,13 @@ public class DBApp {
 			
 			
 			File tableDir;
-			String outerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + OUTER_SPARSE_DIR;
+			String outerSparsePagesDir = INDEXES_DIR + strTableName + "/" + strColName + "/" + OUTER_SPARSE_DIR;
 			tableDir = new File(outerSparsePagesDir);
 			tableDir.mkdirs();
-			String innerSparsePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + INNER_SPARSE_DIR;
+			String innerSparsePagesDir = INDEXES_DIR + strTableName + "/" + strColName + "/" + INNER_SPARSE_DIR;
 			tableDir = new File(innerSparsePagesDir);
 			tableDir.mkdirs();
-			String densePagesDir = TABLES_DIR + strTableName + "/" + strColName + "/" + DENSE_DIR;
+			String densePagesDir = INDEXES_DIR + strTableName + "/" + strColName + "/" + DENSE_DIR;
 			tableDir = new File(densePagesDir);
 			tableDir.mkdirs();
 
@@ -408,7 +409,7 @@ public class DBApp {
 		String[] listOfPathes;
 		
 		if(selectedBackPages == null) {
-			File folder = new File(TABLES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR);
+			File folder = new File(INDEXES_DIR + strTableName + "/" + strColumnName + "/" + OUTER_SPARSE_DIR);
 			File[] listOfFiles = folder.listFiles();
 			listOfPathes = getPathes(listOfFiles);
 		} else {
