@@ -1,6 +1,9 @@
 package team_55;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +15,7 @@ public class DBApp {
 	public ArrayList<Table> tables;
 	private static int maximumRowsCountinPage = 100;
 	private int mBRINSize = 15;
+	private final static String META_DATA_DIR = "data\\metadata.csv";
 
 	public DBApp() {
 
@@ -193,8 +197,7 @@ public class DBApp {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Iterator selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
+	public Iterator<Tuple> selectFromTable(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) throws DBAppException {
 
 		// TODO 7 selectFromTable
@@ -215,16 +218,56 @@ public class DBApp {
 
 	}
 	
-	private Iterator selectUsingExtensiveSearching(String strTableName, String strColumnName, Object[] objarrValues,
+	private Iterator<Tuple> selectUsingExtensiveSearching(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators) {
 		// TODO Normal Selection from table
 		
-		ArrayList<Page> selectedPages = new ArrayList<>();
+		//TODO Do something to check if columnName actually exists in the table
+		
+		ArrayList<Tuple> selectedTuples = new ArrayList<Tuple>();
+		String type = getTypeOf(strTableName, strColumnName);
+
+		
+		Table targetTable = tableExists(strTableName);
+		if(targetTable != null) {
+			
+			ArrayList<String> pagePathes = targetTable.getPagePathes();
+			for(String pagePath: pagePathes) {
+				Page page = Page.deserializePage(pagePath);
+				for(Tuple tuple : page.getRows()) {
+					
+					Object tupleValue = tuple.getValueOf(strColumnName);
+					boolean[] isItHere = new boolean[objarrValues.length];
+					isItHere[0] = true; isItHere[1]= true;
+					
+					for (int i = 0; i < 2; i++) {
+
+						
+						Object compareValue = objarrValues[i];
+						
+						isItHere[i] = compareWithAllTypes(tupleValue,
+										compareValue,
+										strarrOperators[i], type);
+						
+					}
+					
+					if(isItHere[0] && isItHere [1]) {
+						selectedTuples.add(tuple);
+					}
+				}
+				
+			}
+			
+		}
+		
+		if(!selectedTuples.isEmpty()) {
+			return (Iterator<Tuple>) selectedTuples;
+		}
 
 		return null;
 	}
 
-	private Iterator selectUsingBrinIndex(String strTableName, String strColumnName, Object[] objarrValues,
+	private Iterator<Tuple> selectUsingBrinIndex(String strTableName, String strColumnName, Object[] objarrValues,
 			String[] strarrOperators, ArrayList<Object> selectedBackPages, boolean sparseLevel) {
 		
 		ArrayList<Object> selectedDensePages = new ArrayList<>();
@@ -258,11 +301,11 @@ public class DBApp {
 						
 						for (int i = 0; i < 2; i++) {
 
-							Object currentValue = objarrValues[i];
+							Object compareValue = objarrValues[i];
 							
 							isItHere[i] = compareWithAllTypes((Object)sparsePage.getMin(sp),
 											(Object) sparsePage.getMax(sp),
-											(Object)currentValue,
+											(Object)compareValue,
 											strarrOperators[i], type);
 							
 						}
@@ -339,10 +382,15 @@ public class DBApp {
 					}
 				}
 				
+				if(!selectedTuples.isEmpty()) {
+					return (Iterator<Tuple>) selectedTuples;
+				}
+				
 			}
 	
 			
 		}
+	
 		
 		return null;
 
@@ -512,19 +560,37 @@ public class DBApp {
 	}
 
 	private String getTypeOf(String strTableName, String strColumnName) {
-	 // TODO Get stColumnName type out of the meta-data csv file in the
-        // strTableSection
-		Table table = tableExists(strTableName);
-		String type = table.getColumnType(strColumnName);
-		return type;
+
+		Table targetTable = tableExists(strTableName);
+		if(targetTable != null)
+			return targetTable.getColumnType(strColumnName);
+		else
+			return null;
 	}
 
 	private boolean brinIndexed(String strTableName, String strColumnName) {
-		// TODO Check if strTableName has BRINindex on strColumnName from the meta-data
-		// csv file
-	    Table table = tableExists(strTableName);
-        boolean indexed = table.isColumnIndexed(strColumnName);
-		return indexed;
+		
+		try {
+			FileReader metaReader = new FileReader(new File(META_DATA_DIR));
+			BufferedReader metaBuffer = new BufferedReader(metaReader);
+			String line = null;
+			while((line = metaBuffer.readLine()) != null) {
+				String[] lineSplit = line.split(",");
+				String currentTable = lineSplit[0].replaceAll(" ", "");
+				String currentColumn = lineSplit[1].replaceAll(" ", "");
+				if(currentTable.equals(strTableName)
+						&& currentColumn.equals(strColumnName)) {
+					String indexed = lineSplit[4].replaceAll(" ", "");
+					return (indexed.equals("true"));
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	private Table tableExists(String tableName) {

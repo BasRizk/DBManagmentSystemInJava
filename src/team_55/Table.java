@@ -1,10 +1,12 @@
 package team_55;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -32,7 +34,7 @@ public class Table implements Serializable{
 	private int numOfCol;
 	private int maxPageRowNumber; //the maximum number of rows in 1 page for now 200;
 	private ArrayList<Object> primaryKeys;
-	
+	private final static String META_DATA_DIR = "data\\metadata.csv";
 	
 	
 	public Table(String strTableName, String strClusteringKeyColumn, Hashtable<String,String> htblColNameType , int maxPageRowNumber) throws DBAppException {
@@ -93,9 +95,13 @@ public class Table implements Serializable{
 		
 	}
 	
+	/**
+	 * Appends the meta-data of the call on table in the meta-data file.
+	 */
+	
 	private void appendToMetadataFile() {
 				
-		String filePath = "data\\metadata.csv";
+		String filePath = META_DATA_DIR;
 		
 		String data = "";
 		
@@ -107,10 +113,12 @@ public class Table implements Serializable{
 			String colType = ColName_Type.get(colName);
 			boolean isKey = colName == primaryKeyName;
 			
-			boolean isIndexed = isIndexed(colName);
+			//It has to be not indexed at first !
+			//boolean isIndexed = isIndexed(colName);
+			
 			
 			data = data +  this.tableName + ", " + colName + ", " + colType + ", " +
-						isKey + ", " + isIndexed + "\n";
+						isKey + ", " + false + "\n";
 		}
 		
 		try {
@@ -126,6 +134,15 @@ public class Table implements Serializable{
 			
 		}
 		
+	}
+	
+	/**
+	 * 
+	 * @param strColumnName, column name of the table to be changed.
+	 * @param indexed, new Value of index column for the correspondance index.
+	 */
+	private void updateMetaWithIndexedColumn(String strColumnName, boolean indexed) {
+		//TODO Update the Meta-data File for the new indexing column
 	}
 	
 	private void createPage() {
@@ -146,6 +163,7 @@ public class Table implements Serializable{
         serializeTable();
 	    
 	}
+	
 	public void deleteFromPage(Hashtable<String,Object> htblColNameValue) throws DBAppException {
 
 		Page page = null;
@@ -271,6 +289,7 @@ public class Table implements Serializable{
 		}
 		
 	}
+	
 	private Object primaryKeyExists(Object newKey) {
 		Object reqKey = null;
 		for (Object key : primaryKeys) {
@@ -281,8 +300,29 @@ public class Table implements Serializable{
 		}
 		return reqKey;
 	}
-	public boolean isIndexed(String colName) {
+	
+	public boolean isIndexed(String strColumnName) {
 		//TODO 11 depends on indexing way later
+		try {
+			FileReader metaReader = new FileReader(new File(META_DATA_DIR));
+			BufferedReader metaBuffer = new BufferedReader(metaReader);
+			String line = null;
+			while((line = metaBuffer.readLine()) != null) {
+				String[] lineSplit = line.split(",");
+				String currentTable = lineSplit[0].replaceAll(" ", "");
+				String currentColumn = lineSplit[1].replaceAll(" ", "");
+				if(currentTable.equals(this.tableName)
+						&& currentColumn.equals(strColumnName)) {
+					String indexed = lineSplit[4].replaceAll(" ", "");
+					return (indexed.equals("true"));
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 	
