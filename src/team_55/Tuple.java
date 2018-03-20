@@ -5,9 +5,6 @@ import java.util.Hashtable;
 
 public class Tuple implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Hashtable<String, Object> colNameValue;
 	
@@ -29,6 +26,9 @@ public class Tuple implements Serializable{
 		
 	}
 	
+	public Object getValueOf(String columnName) {
+		return colNameValue.get(columnName);
+	}
 	
 	
 	public void printTuple() {
