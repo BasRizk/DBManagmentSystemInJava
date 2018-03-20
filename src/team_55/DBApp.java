@@ -180,6 +180,7 @@ public class DBApp {
 				}
 				page.serializePage(path);
 			}
+			System.out.println(densePages.size());
 			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages, densePagesDir);
 			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel, innerSparsePagesDir);
 
