@@ -49,14 +49,6 @@ public class BrinSparsePage implements Serializable {
 		}
 	}
 	
-	public ArrayList<Object> getMinIndexCol() {
-		return minIndexCol;
-	}
-
-	public ArrayList<Object> getMaxIndexCol() {
-		return maxIndexCol;
-	}
-	
 	public static BrinSparsePage deserializeBrinSparsePage(String sparsePagePath) {
 		BrinSparsePage page = null;
 		
@@ -74,6 +66,14 @@ public class BrinSparsePage implements Serializable {
         }
 		
 		return page;
+	}
+	
+	public ArrayList<Object> getMinIndexCol() {
+		return minIndexCol;
+	}
+
+	public ArrayList<Object> getMaxIndexCol() {
+		return maxIndexCol;
 	}
 	
 	public Object getMin(int index) {
