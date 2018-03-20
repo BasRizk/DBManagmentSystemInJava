@@ -118,9 +118,71 @@ public void createBRINIndex(String strTableName, String strColName)
 		}
 	}
 	
+	public void createBRINIndex(String strTableName, String strColName)
+			throws DBAppException {
+		
+		//TODO 2 createBRINindex
+		Table targetTable = tableExists(strTableName);
+		targetTable.setColumnIndexed(strColName);
+        String colType = targetTable.getColumnType(strColName);
+		if (targetTable == null)
+			throw new DBAppException("table does not exist!");
+		else {
+			// Creating index goes here
+			Page page = null;
+
+			ArrayList<DensePage> densePages = new ArrayList<DensePage>();
+			for (String path : targetTable.getPagePathes()) {
+				page = Page.deserializePage(path);
+				for (Tuple tuple : page.getRows()) {
+					//TODO adding exception if user entered wrong column name
+					Object value = tuple.getColNameValue().get(strColName);
+					insertIntoDensePage(densePages,value,tuple, colType);
+				}
+				page.serializePage(path);
+			}
+			ArrayList<BrinSparsePage> sparsePagesFirstLevel = createSparseLevel(densePages);
+			ArrayList<BrinSparsePage> sparsePagesSecondLevel = createSecondSparseLevel(sparsePagesFirstLevel);
+			
+		}
+	}
+	
+	
+	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages){
+		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
+		for (BrinSparsePage sparsePage : sparsePages) {
+			if(secondLevelSparsePages.get(secondLevelSparsePages.size()).getSize() == maximumRowsCountinPage)
+				secondLevelSparsePages.add(new BrinSparsePage("BrinSparsePage",2));
+			BrinSparsePage lastPage = secondLevelSparsePages.get(secondLevelSparsePages.size());
+			lastPage.getMinIndexCol().add(sparsePage.getMin(0));
+			lastPage.getMaxIndexCol().add(sparsePage.getMax(sparsePage.getSize()));
+		}
+		return secondLevelSparsePages;
+	}
+	
+	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages){
+		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
+		for (DensePage densePage : densePages) {
+			if(sparsePages.get(sparsePages.size()).getSize() == maximumRowsCountinPage)
+				sparsePages.add(new BrinSparsePage("DensePage",1));
+			BrinSparsePage lastPage = sparsePages.get(sparsePages.size());
+			lastPage.getMinIndexCol().add(densePage.getIndex().get(0));
+			lastPage.getMaxIndexCol().add(densePage.getIndex().get(densePage.getIndex().size()));
+		}
+		return sparsePages;
+	}
+	
+	
+	
 	private static void insertIntoDensePage(ArrayList<DensePage> densePages,Object value,Tuple tuple, String colType){
 		String stringValue = (String) value;
 		//boolean inserted = false;
+		if(densePages.size() == 0){
+			DensePage firstPage = new DensePage(colType);
+			densePages.add(firstPage);
+			firstPage.insertInDenseIndex(value, tuple);
+			return;
+		}
 		int i = 0;
 		for (DensePage densePage : densePages) {
 			ArrayList<Object> index = densePage.getIndex();
@@ -131,7 +193,6 @@ public void createBRINIndex(String strTableName, String strColName)
 				}
 				else{
 					Object val = index.get(index.size());
-					densePage.getIndex().remove(index.size());
 					Tuple tuple2 = densePage.getTuples(val).get(densePage.getTuples(val).size());
 					densePage.deleteFromDenseIndex(val, tuple2);
 					densePage.insertInDenseIndex(value, tuple);
@@ -155,8 +216,6 @@ public void createBRINIndex(String strTableName, String strColName)
 		}
 		*/
 	}
-	
-	
 	public void insertIntoTable(String strTableName, Hashtable<String,Object> htblColNameValue) 
 			throws DBAppException {
 		
