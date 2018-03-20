@@ -54,11 +54,8 @@ public class Table implements Serializable{
 		this.numOfCol = ColName_Type.size();
 		this.numOfRows = 0;
 		
-		
-		@SuppressWarnings("unchecked")
-        ArrayList<String> keySet = (ArrayList<String>) ColName_Type.keySet();
-        ArrayList<String> keys = keySet;
-        for(String key: keys){
+		ColName_Indexed = new Hashtable<>();
+        for(String key: ColName_Type.keySet()){
             this.ColName_Indexed.put(key, false);
         }
 

@@ -17,6 +17,7 @@ public class DBAppCreateInsertTest{
 		htblColNameType.put("gpa", "java.lang.Double");
 		
 		app.createTable( strTableName, "id", htblColNameType );
+		app.createBRINIndex(strTableName, "gpa");
 		
 		
 		//Insertion into Student Table
