@@ -165,6 +165,8 @@ public class DensePage implements Serializable{
      */
     private static void insertionSort(ArrayList<Object> array, Object value, String colType) {
         
+        array.add(new Object());
+        
         if(colType.equals("java.lang.String")) {
             String stringValue = (String) value;
             int positionOfInsertion = 0;
@@ -176,7 +178,7 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i >= positionOfInsertion; i--) {
+            for(int i = array.size(); i > positionOfInsertion; i--) {
                 array.set(i, array.get(i-1));
             }
         
@@ -193,7 +195,7 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i >= positionOfInsertion; i--) {
+            for(int i = array.size(); i > positionOfInsertion; i--) {
                 array.set(i, array.get(i-1));
             }
         
@@ -210,7 +212,7 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i >= positionOfInsertion; i--) {
+            for(int i = array.size(); i > positionOfInsertion; i--) {
                 array.set(i, array.get(i-1));
             }
         
@@ -227,7 +229,7 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i >= positionOfInsertion; i--) {
+            for(int i = array.size(); i > positionOfInsertion; i--) {
                 array.set(i, array.get(i-1));
             }
         
@@ -244,7 +246,7 @@ public class DensePage implements Serializable{
      */
     private static void insertionSortForArray(ArrayList<ArrayList<Tuple>> array, int positionOfInsertion) {
         
-        for(int i = array.size(); i >= positionOfInsertion; i--) {
+        for(int i = array.size(); i > positionOfInsertion; i--) {
             array.set(i, array.get(i-1));
         }
         
