@@ -21,30 +21,16 @@ import java.util.ArrayList;
 
 public class BrinSparsePage implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<Object> minIndexCol;
 	private ArrayList<Object> maxIndexCol;
-	private ArrayList<?> refCol;
-	private int level;
+	private ArrayList<String> refCol;
 	
-	public BrinSparsePage(String typeOfRef,int level) {
+	public BrinSparsePage(String typeOfRef) {
 		this.minIndexCol = new ArrayList<Object>();
 		this.maxIndexCol = new ArrayList<Object>();
 		
-		switch(typeOfRef) {
-		case "DensePage":
-			this.refCol = new ArrayList<DensePage>();
-			break;
-		case "BrinSparsePage":
-			this.refCol = new ArrayList<BrinSparsePage>();
-			break;
-		default:
-			this.refCol = new ArrayList<>();
-		}
-		this.level = level;
+		this.refCol = new ArrayList<String>();
 	}
 	
 	public void serializeBrinSparsePage(String sparsePagePath) {
@@ -94,10 +80,6 @@ public class BrinSparsePage implements Serializable {
 	
 	public Object getRef(int index) {
 		return refCol.get(index);
-	}
-	
-	public int getIndexLevel() {
-		return level;
 	}
 	
 	public int getSize() {
