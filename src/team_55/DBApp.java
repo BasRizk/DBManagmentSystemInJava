@@ -127,7 +127,7 @@ public class DBApp {
 		table.getColName_Type().keySet();
 		
 		for (String key : table.getColName_Type().keySet()) {
-			if(table.isIndexed(key)) {
+			if(brinIndexed(strTableName, key)) {
 				File tableDir;
 				String outerSparsePagesDir = INDEXES_DIR + strTableName + "/" + key + "/" + OUTER_SPARSE_DIR;
 				tableDir = new File(outerSparsePagesDir);
@@ -138,7 +138,9 @@ public class DBApp {
 				String densePagesDir = INDEXES_DIR + strTableName + "/" + key + "/" + DENSE_DIR;
 				tableDir = new File(densePagesDir);
 				tableDir.delete();
+				
 				createBRINIndex(strTableName, key);
+				
 			}
 		}
 	}
