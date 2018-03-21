@@ -164,9 +164,7 @@ public class DensePage implements Serializable{
      * @param colType type of the column that the index is built on
      */
     private static void insertionSort(ArrayList<Object> array, Object value, String colType) {
-        
-        array.add(new Object());
-        
+                
         if(colType.equals("java.lang.String")) {
             String stringValue = (String) value;
             int positionOfInsertion = 0;
