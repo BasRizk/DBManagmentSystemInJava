@@ -165,7 +165,6 @@ public class DensePage implements Serializable{
      */
     private static void insertionSort(ArrayList<Object> array, Object value, String colType) {
         
-        array.add(new Object());
         
         if(colType.equals("java.lang.String")) {
             String stringValue = (String) value;
@@ -178,12 +177,8 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i > positionOfInsertion; i--) {
-                array.set(i, array.get(i-1));
-            }
-        
-            array.set(positionOfInsertion, stringValue);
-        
+            array.add(positionOfInsertion, stringValue);
+            
         } else if (colType.equals("java.lang.Integer")) {
             int intValue = (int) value;
             int positionOfInsertion = 0;
@@ -194,12 +189,8 @@ public class DensePage implements Serializable{
                     break;
                 }
             }
-        
-            for(int i = array.size(); i > positionOfInsertion; i--) {
-                array.set(i, array.get(i-1));
-            }
-        
-            array.set(positionOfInsertion, intValue);
+
+            array.add(positionOfInsertion, intValue);
         
         } else if (colType.equals("java.lang.Double")) {
             Double doubleValue = (Double) value;
@@ -212,12 +203,8 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i > positionOfInsertion; i--) {
-                array.set(i, array.get(i-1));
-            }
-        
-            array.set(positionOfInsertion, doubleValue);
-        
+            array.add(positionOfInsertion, doubleValue);
+            
         } else {
             Date dateValue = (Date) value;
             int positionOfInsertion = 0;
@@ -229,11 +216,8 @@ public class DensePage implements Serializable{
                 }
             }
         
-            for(int i = array.size(); i > positionOfInsertion; i--) {
-                array.set(i, array.get(i-1));
-            }
-        
-            array.set(positionOfInsertion, dateValue);
+            array.add(positionOfInsertion, dateValue);
+            
         }
         
     }
@@ -247,10 +231,10 @@ public class DensePage implements Serializable{
     private static void insertionSortForArray(ArrayList<ArrayList<Tuple>> array, int positionOfInsertion) {
         
         for(int i = array.size(); i > positionOfInsertion; i--) {
-            array.set(i, array.get(i-1));
+            array.add(i, array.get(i-1));
         }
         
-        array.set(positionOfInsertion, new ArrayList<>());
+        array.add(positionOfInsertion, new ArrayList<>());
     }
 
 
