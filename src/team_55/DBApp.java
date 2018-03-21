@@ -208,6 +208,11 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSecondSparseLevel(ArrayList<BrinSparsePage> sparsePages, String beforePagesDir){
 		ArrayList<BrinSparsePage> secondLevelSparsePages = new ArrayList<BrinSparsePage>();
 		int counterOfSparsePages = 0;
+		
+		if(secondLevelSparsePages.size() == 0) {
+            secondLevelSparsePages.add(new BrinSparsePage());
+        }
+		
 		for (BrinSparsePage sparsePage : sparsePages) {
 			if(secondLevelSparsePages.get(secondLevelSparsePages.size() - 1).getSize() == mBRINSize)
 				secondLevelSparsePages.add(new BrinSparsePage());
@@ -223,6 +228,11 @@ public class DBApp {
 	private static ArrayList<BrinSparsePage> createSparseLevel(ArrayList<DensePage> densePages, String beforePagesDir){
 		ArrayList<BrinSparsePage> sparsePages = new ArrayList<BrinSparsePage>();
 		int counterOfDensePages = 0;
+		
+		if(sparsePages.size() == 0) {
+		    sparsePages.add(new BrinSparsePage());
+		}
+		
 		for (DensePage densePage : densePages) {
 			if(sparsePages.get(sparsePages.size() - 1).getSize() == mBRINSize)
 				sparsePages.add(new BrinSparsePage());
